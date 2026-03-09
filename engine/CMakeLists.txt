@@ -6,6 +6,8 @@ set(PROJECT_SOURCE_FILES
     src/engine.cpp
     src/app.cpp
     src/input.cpp
+    src/shader_program.cpp
+    src/graphics_api.cpp
 )
 
 include_directories(src)

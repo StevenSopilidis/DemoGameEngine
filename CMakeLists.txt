@@ -12,6 +12,9 @@ set(PROJECT_SOURCE_FILES
     src/main.cpp
 )
 
+include_directories(engine/third-party/glew/include)
+
+
 include_directories(src)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES})
 

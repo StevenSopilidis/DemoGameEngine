@@ -1,6 +1,8 @@
 #include "engine_includes.h"
 #include "game.h"
 
+#include <iostream>
+
 int main()
 {
     auto& engine = engine::Engine::GetInstance();
@@ -8,6 +10,7 @@ int main()
 
     if (engine.Init(1280, 720))
     {
+        std::cout << "Engine initialized successfully\n";
         engine.Run();
     }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphics_api.h"
 #include "input.h"
 
 #include <chrono>
@@ -34,6 +35,7 @@ class Engine
     [[nodiscard]] Application* GetApplication() const noexcept;
 
     InputManager& GetInputManager();
+    GraphicsApi&  GetGraphicsApi();
 
   private:
     using GLFWwindowPtr = std::unique_ptr<GLFWwindow, GLFWwindowDeleter>;
@@ -44,5 +46,6 @@ class Engine
     std::chrono::high_resolution_clock::time_point last_time_point_;
     GLFWwindowPtr                                  window_;
     InputManager                                   input_manager_;
+    GraphicsApi                                    graphics_api_;
 };
 } // namespace engine

@@ -3,3 +3,4 @@
 #include "app.h"
 #include "engine.h"
 #include "input.h"
+#include "shader_program.h"

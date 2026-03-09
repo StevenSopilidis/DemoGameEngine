@@ -117,4 +117,6 @@ Application* Engine::GetApplication() const noexcept { return application_.get()
 
 InputManager& Engine::GetInputManager() { return input_manager_; }
 
+GraphicsApi& Engine::GetGraphicsApi() { return graphics_api_; };
+
 } // namespace engine
