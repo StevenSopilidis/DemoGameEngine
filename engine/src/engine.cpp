@@ -23,6 +23,8 @@ Engine& Engine::GetInstance()
     return instance;
 }
 
+RenderQueue& Engine::GetRenderQueue() noexcept { return render_queue_; }
+
 void keyCallback(GLFWwindow* window, int key, int, int action, int)
 {
     auto& manager = Engine::GetInstance().GetInputManager();
@@ -95,7 +97,13 @@ void Engine::Run()
         auto now         = std::chrono::high_resolution_clock::now();
         auto deltaTime   = std::chrono::duration<float>(now - last_time_point_).count();
         last_time_point_ = now;
+
         application_->Update(deltaTime);
+
+        graphics_api_.SetClearColor(1.f, 1.f, 1.f, 1.f);
+        graphics_api_.ClearBuffers();
+
+        render_queue_.Draw(graphics_api_);
 
         glfwSwapBuffers(window_.get());
     }

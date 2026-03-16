@@ -2,6 +2,7 @@
 
 #include "graphics_api.h"
 #include "input.h"
+#include "render_queue.h"
 
 #include <chrono>
 #include <memory>
@@ -33,6 +34,7 @@ class Engine
 
     void                       SetApplication(Application* app) noexcept;
     [[nodiscard]] Application* GetApplication() const noexcept;
+    [[nodiscard]] RenderQueue& GetRenderQueue() noexcept;
 
     InputManager& GetInputManager();
     GraphicsApi&  GetGraphicsApi();
@@ -47,5 +49,6 @@ class Engine
     GLFWwindowPtr                                  window_;
     InputManager                                   input_manager_;
     GraphicsApi                                    graphics_api_;
+    RenderQueue                                    render_queue_;
 };
 } // namespace engine

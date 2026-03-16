@@ -1,5 +1,7 @@
 #include "graphics_api.h"
 
+#include "material.h"
+#include "mesh.h"
 #include "shader_program.h"
 
 namespace engine
@@ -53,6 +55,51 @@ std::shared_ptr<ShaderProgram> GraphicsApi::CreateShaderProgram(const std::strin
     return std::make_shared<ShaderProgram>(shaderProgramId);
 }
 
-void GraphicsApi::BindShaderProgram(ShaderProgram* program) { program->Bind(); }
+void GraphicsApi::BindShaderProgram(ShaderProgram& program) { program.Bind(); }
+
+void GraphicsApi::BindMaterial(Material* material) { material->Bind(); }
+
+GLuint GraphicsApi::CreateVertexBuffer(const std::vector<float>& vertices)
+{
+    GLuint vbo{0};
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    return vbo;
+}
+
+GLuint GraphicsApi::CreateIndexBuffer(const std::vector<uint32_t>& indices)
+{
+    GLuint ebo{0};
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), indices.data(),
+                 GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    return ebo;
+}
+
+void GraphicsApi::BindMesh(Mesh* mesh)
+{
+    if (mesh != nullptr)
+    {
+        mesh->Bind();
+    }
+}
+
+void GraphicsApi::DrawMesh(Mesh* mesh)
+{
+    if (mesh != nullptr)
+    {
+        mesh->Draw();
+    }
+}
+
+void GraphicsApi::SetClearColor(float r, float g, float b, float a) { glClearColor(r, g, b, a); }
+
+void GraphicsApi::ClearBuffers() { glClear(GL_COLOR_BUFFER_BIT); }
 
 } // namespace engine

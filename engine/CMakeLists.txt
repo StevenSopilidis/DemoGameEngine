@@ -8,6 +8,9 @@ set(PROJECT_SOURCE_FILES
     src/input.cpp
     src/shader_program.cpp
     src/graphics_api.cpp
+    src/material.cpp
+    src/mesh.cpp
+    src/render_queue.cpp
 )
 
 include_directories(src)
