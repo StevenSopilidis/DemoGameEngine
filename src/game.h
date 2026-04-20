@@ -2,7 +2,7 @@
 
 #include "engine_includes.h"
 
-#include <memory.h>
+#include <memory>
 
 class Game : public engine::Application
 {

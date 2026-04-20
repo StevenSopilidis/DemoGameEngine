@@ -24,7 +24,7 @@ std::shared_ptr<ShaderProgram> GraphicsApi::CreateShaderProgram(const std::strin
         return nullptr;
     }
 
-    auto fragmentShader     = glCreateShader(GL_VERTEX_SHADER);
+    auto fragmentShader     = glCreateShader(GL_FRAGMENT_SHADER);
     auto fragmentShaderCStr = fragmentSource.c_str();
     glShaderSource(fragmentShader, 1, &fragmentShaderCStr, nullptr);
     glCompileShader(fragmentShader);
@@ -42,6 +42,7 @@ std::shared_ptr<ShaderProgram> GraphicsApi::CreateShaderProgram(const std::strin
     glAttachShader(shaderProgramId, fragmentShader);
     glLinkProgram(shaderProgramId);
 
+    glGetProgramiv(shaderProgramId, GL_LINK_STATUS, &success);
     if (!success)
     {
         std::array<char, 512> infoLog;
@@ -75,7 +76,7 @@ GLuint GraphicsApi::CreateIndexBuffer(const std::vector<uint32_t>& indices)
     GLuint ebo{0};
     glGenBuffers(1, &ebo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(float), indices.data(),
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(),
                  GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
