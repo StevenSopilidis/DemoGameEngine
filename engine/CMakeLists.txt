@@ -11,6 +11,8 @@ set(PROJECT_SOURCE_FILES
     src/material.cpp
     src/mesh.cpp
     src/render_queue.cpp
+    src/scene.cpp
+    src/game_object.cpp
 )
 
 include_directories(src)
