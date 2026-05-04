@@ -9,6 +9,8 @@ void Material::SetShaderProgram(std::shared_ptr<ShaderProgram>& shaderProgram)
     shader_program_ = shaderProgram;
 }
 
+std::shared_ptr<ShaderProgram> Material::GetShaderProgram() { return shader_program_; }
+
 void Material::SetParam(const std::string& name, float value) { float_params_[name] = value; }
 
 void Material::SetParam(const std::string& name, float v0, float v1)

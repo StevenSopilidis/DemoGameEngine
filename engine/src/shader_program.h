@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GL/glew.h"
+#include "glm/ext/matrix_float4x4.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -23,6 +24,7 @@ class ShaderProgram
     GLint GetUniformLocation(const std::string& name);
     void  SetUniform(const std::string& name, float value);
     void  SetUniform(const std::string& name, float v0, float v1);
+    void  SetUniform(const std::string& name, const glm::mat4& mat);
 
   private:
     std::unordered_map<std::string, GLint> uniform_location_cache_;

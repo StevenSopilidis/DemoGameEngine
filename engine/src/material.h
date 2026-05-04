@@ -14,6 +14,8 @@ class Material
     void SetParam(const std::string& name, float v0, float v1);
     void Bind();
 
+    std::shared_ptr<ShaderProgram> GetShaderProgram();
+
   private:
     std::shared_ptr<ShaderProgram>                           shader_program_;
     std::unordered_map<std::string, float>                   float_params_;

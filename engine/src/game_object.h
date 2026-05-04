@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -23,6 +25,17 @@ class GameObject
     [[nodiscard]] bool               IsAlive() const;
     void                             MarkForDestroy();
 
+    [[nodiscard]] const glm::vec3& Position() const;
+    [[nodiscard]] const glm::vec3& Rotation() const;
+    [[nodiscard]] const glm::vec3& Scale() const;
+
+    void SetPosition(glm::vec3 position);
+    void SetRotation(glm::vec3 rotation);
+    void SetScale(glm::vec3 scale);
+
+    [[nodiscard]] glm::mat4 GetLocalTransform() const;
+    [[nodiscard]] glm::mat4 GetWorldTransform() const;
+
   protected:
     GameObject() = default;
 
@@ -31,6 +44,10 @@ class GameObject
     GameObject*                              parent_{nullptr};
     std::vector<std::unique_ptr<GameObject>> children_;
     bool                                     is_alive_{true};
+
+    glm::vec3 position_ = glm::vec3(0.0f);
+    glm::vec3 rotation_ = glm::vec3(0.0f);
+    glm::vec3 scale_    = glm::vec3(1.0f);
 
     friend class Scene;
 };

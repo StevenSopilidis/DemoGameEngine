@@ -1,7 +1,8 @@
 #pragma once
 
+#include "glm/ext/matrix_float4x4.hpp"
+
 #include <vector>
- 
 
 namespace engine
 {
@@ -13,6 +14,7 @@ struct RenderCommand
 {
     Mesh*     mesh{nullptr};
     Material* material{nullptr};
+    glm::mat4 model_matrix;
 };
 
 class RenderQueue

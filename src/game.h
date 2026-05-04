@@ -2,8 +2,6 @@
 
 #include "engine_includes.h"
 
-#include <memory>
-
 class Game : public engine::Application
 {
   public:
@@ -12,8 +10,5 @@ class Game : public engine::Application
     void Destroy() override;
 
   private:
-    engine::Material              material_;
-    std::unique_ptr<engine::Mesh> mesh_;
-    float                         offset_x_{0.0f};
-    float                         offset_y_{0.0f};
+    engine::Scene scene_;
 };

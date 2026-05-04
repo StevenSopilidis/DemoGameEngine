@@ -27,10 +27,13 @@ add_subdirectory(third-party/glew/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/glew_
 
 include_directories(third-party/glew/include)
 
+add_subdirectory(third-party/glm)
+
 set_property(TARGET glew_s PROPERTY FOLDER GLEW)
 set_property(TARGET glew PROPERTY FOLDER GLEW)
 
 target_link_libraries(${PROJECT_NAME}
     glfw
     glew_s
+    glm
 )
