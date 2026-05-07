@@ -1,6 +1,7 @@
 #include "test_object.h"
 
 #include "GLFW/glfw3.h"
+#include "mesh_component.h"
 #include "string"
 
 TestObject::TestObject()
@@ -36,7 +37,8 @@ TestObject::TestObject()
     auto& graphicsAPI   = engine::Engine::GetInstance().GetGraphicsApi();
     auto  shaderProgram = graphicsAPI.CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
 
-    material_.SetShaderProgram(shaderProgram);
+    auto material = std::make_shared<engine::Material>();
+    material->SetShaderProgram(shaderProgram);
 
     std::vector<float> vertices = {
         0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
@@ -51,7 +53,9 @@ TestObject::TestObject()
     layout.elements.push_back({1, 3, GL_FLOAT, sizeof(float) * 3});
     layout.stride = sizeof(float) * 6;
 
-    mesh_ = std::make_unique<engine::Mesh>(layout, vertices, indices);
+    auto mesh = std::make_shared<engine::Mesh>(layout, vertices, indices);
+
+    AddComponent(new engine::MeshComponent(material, mesh));
 }
 
 void TestObject::Update(float deltaTime)
@@ -78,12 +82,4 @@ void TestObject::Update(float deltaTime)
         position.y -= 0.001f;
     }
     SetPosition(position);
-
-    engine::RenderCommand command;
-    command.material     = &material_;
-    command.mesh         = mesh_.get();
-    command.model_matrix = GetWorldTransform();
-
-    auto& queue = engine::Engine::GetInstance().GetRenderQueue();
-    queue.Submit(command);
 }

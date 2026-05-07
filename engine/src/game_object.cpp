@@ -7,6 +7,11 @@ namespace engine
 {
 void GameObject::Update(float deltaTime)
 {
+    for (auto& component : components_)
+    {
+        component->Update(deltaTime);
+    }
+
     auto result = std::ranges::remove_if(children_,
                                          [](const std::unique_ptr<GameObject>& child)
                                          {
@@ -30,6 +35,12 @@ GameObject* GameObject::Parent() const { return parent_; }
 bool GameObject::IsAlive() const { return is_alive_; }
 
 void GameObject::MarkForDestroy() { is_alive_ = false; }
+
+void GameObject::AddComponent(Component* component)
+{
+    components_.emplace_back(component);
+    component->owner_ = this;
+}
 
 [[nodiscard]] const glm::vec3& GameObject::Position() const { return position_; }
 [[nodiscard]] const glm::vec3& GameObject::Rotation() const { return rotation_; }

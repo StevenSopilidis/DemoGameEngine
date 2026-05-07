@@ -1,11 +1,13 @@
 #pragma once
 
 #include "app.h"
+#include "component.h"
 #include "engine.h"
 #include "game_object.h"
 #include "input.h"
 #include "material.h"
 #include "mesh.h"
+#include "mesh_component.h"
 #include "render_queue.h"
 #include "scene.h"
 #include "shader_program.h"

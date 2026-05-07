@@ -13,6 +13,8 @@ set(PROJECT_SOURCE_FILES
     src/render_queue.cpp
     src/scene.cpp
     src/game_object.cpp
+    src/component.cpp
+    src/mesh_component.cpp
 )
 
 include_directories(src)

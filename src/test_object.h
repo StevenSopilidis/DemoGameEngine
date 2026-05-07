@@ -12,6 +12,4 @@ class TestObject : public engine::GameObject
     void Update(float deltaTime) override;
 
   private:
-    engine::Material              material_;
-    std::unique_ptr<engine::Mesh> mesh_;
 };

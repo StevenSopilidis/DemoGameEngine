@@ -1,5 +1,7 @@
 #pragma once
 
+#include "component.h"
+
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 #include <memory>
@@ -25,6 +27,8 @@ class GameObject
     [[nodiscard]] bool               IsAlive() const;
     void                             MarkForDestroy();
 
+    void AddComponent(Component* component);
+
     [[nodiscard]] const glm::vec3& Position() const;
     [[nodiscard]] const glm::vec3& Rotation() const;
     [[nodiscard]] const glm::vec3& Scale() const;
@@ -43,6 +47,7 @@ class GameObject
     std::string                              name_;
     GameObject*                              parent_{nullptr};
     std::vector<std::unique_ptr<GameObject>> children_;
+    std::vector<std::unique_ptr<Component>>  components_;
     bool                                     is_alive_{true};
 
     glm::vec3 position_ = glm::vec3(0.0f);
