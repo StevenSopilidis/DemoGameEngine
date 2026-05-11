@@ -3,6 +3,7 @@
 #include "graphics_api.h"
 #include "input.h"
 #include "render_queue.h"
+#include "scene.h"
 
 #include <chrono>
 #include <memory>
@@ -39,12 +40,16 @@ class Engine
     InputManager& GetInputManager();
     GraphicsApi&  GetGraphicsApi();
 
+    Scene* CurrentScene();
+    void   SetCurrentScene(Scene* scene);
+
   private:
     using GLFWwindowPtr = std::unique_ptr<GLFWwindow, GLFWwindowDeleter>;
 
     Engine() = default;
 
     std::unique_ptr<Application>                   application_;
+    std::unique_ptr<Scene>                         current_scene_;
     std::chrono::high_resolution_clock::time_point last_time_point_;
     GLFWwindowPtr                                  window_;
     InputManager                                   input_manager_;

@@ -15,6 +15,7 @@ set(PROJECT_SOURCE_FILES
     src/game_object.cpp
     src/component.cpp
     src/mesh_component.cpp
+    src/camera_component.cpp
 )
 
 include_directories(src)

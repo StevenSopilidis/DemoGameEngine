@@ -28,6 +28,21 @@ class GameObject
     void                             MarkForDestroy();
 
     void AddComponent(Component* component);
+    template <typename T, typename = typename std::enable_if<std::is_base_of_v<Component, T>>>
+    T* GetComponent()
+    {
+        auto typeId = Component::StaticTypeId<T>();
+
+        for (const auto& component : components_)
+        {
+            if (component->GetTypeId() == typeId)
+            {
+                return static_cast<T*>(component.get());
+            }
+        }
+
+        return nullptr;
+    }
 
     [[nodiscard]] const glm::vec3& Position() const;
     [[nodiscard]] const glm::vec3& Rotation() const;

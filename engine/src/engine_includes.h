@@ -1,6 +1,7 @@
 #pragma once
 
 #include "app.h"
+#include "camera_component.h"
 #include "component.h"
 #include "engine.h"
 #include "game_object.h"

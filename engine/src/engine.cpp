@@ -3,6 +3,8 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include "app.h"
+#include "camera_component.h"
+#include "component.h"
 
 #include <iostream>
 
@@ -103,7 +105,27 @@ void Engine::Run()
         graphics_api_.SetClearColor(1.f, 1.f, 1.f, 1.f);
         graphics_api_.ClearBuffers();
 
-        render_queue_.Draw(graphics_api_);
+        CameraData cameraData;
+
+        int width;
+        int height;
+        glfwGetWindowSize(window_.get(), &width, &height);
+        auto aspect = static_cast<float>(width / height);
+
+        if (current_scene_)
+        {
+            if (auto* cameraObject = current_scene_->MainCamera())
+            {
+                auto* cameraComponent = cameraObject->GetComponent<CameraComponent>();
+                if (cameraComponent != nullptr)
+                {
+                    cameraData.viewMatrix       = cameraComponent->GetViewMatrix();
+                    cameraData.projectionMatrix = cameraComponent->GetProjectionMatrix(aspect);
+                }
+            }
+        }
+
+        render_queue_.Draw(graphics_api_, cameraData);
 
         glfwSwapBuffers(window_.get());
     }
@@ -126,5 +148,9 @@ Application* Engine::GetApplication() const noexcept { return application_.get()
 InputManager& Engine::GetInputManager() { return input_manager_; }
 
 GraphicsApi& Engine::GetGraphicsApi() { return graphics_api_; };
+
+Scene* Engine::CurrentScene() { return current_scene_.get(); }
+
+void Engine::SetCurrentScene(Scene* scene) { current_scene_.reset(scene); }
 
 } // namespace engine

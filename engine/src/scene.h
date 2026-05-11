@@ -29,7 +29,11 @@ class Scene
 
     bool SetParent(GameObject* obj, GameObject* parent);
 
+    void        SetMainCamera(GameObject* camera);
+    [[nodiscard]] GameObject* MainCamera() const;
+
   private:
     std::vector<std::unique_ptr<GameObject>> objects_;
+    GameObject*                              main_camera_{nullptr};
 };
 } // namespace engine

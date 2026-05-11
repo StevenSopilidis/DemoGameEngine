@@ -26,7 +26,7 @@ void MeshComponent::Update(float deltaTime)
     command.mesh         = mesh_.get();
     command.model_matrix = Owner()->GetWorldTransform();
 
-    auto& queue = engine::GetInstance().GetRenderQueue();
+    auto& queue = Engine::GetInstance().GetRenderQueue();
     queue.Submit(command);
 }
 

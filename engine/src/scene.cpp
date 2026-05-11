@@ -146,4 +146,8 @@ bool Scene::SetParent(GameObject* obj, GameObject* parent)
     return res;
 }
 
+void Scene::SetMainCamera(GameObject* camera) { main_camera_ = camera; }
+
+GameObject* Scene::MainCamera() const { return main_camera_; }
+
 } // namespace engine

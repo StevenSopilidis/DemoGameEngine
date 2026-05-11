@@ -9,12 +9,17 @@ namespace engine
 {
 void RenderQueue::Submit(RenderCommand& command) { commands_.push_back(command); }
 
-void RenderQueue::Draw(GraphicsApi& api)
+void RenderQueue::Draw(GraphicsApi& api, const CameraData& cameraData)
 {
     for (auto& command : commands_)
     {
         api.BindMaterial(command.material);
-        command.material->GetShaderProgram()->SetUniform("uModel", command.model_matrix);
+        auto shaderProgram = command.material->GetShaderProgram();
+        shaderProgram->SetUniform("uModel", command.model_matrix);
+
+        shaderProgram->SetUniform("uView", cameraData.viewMatrix);
+        shaderProgram->SetUniform("uProjection", cameraData.projectionMatrix);
+
         api.BindMesh(command.mesh);
         api.DrawMesh(command.mesh);
     }

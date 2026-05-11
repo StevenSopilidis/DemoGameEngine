@@ -4,5 +4,7 @@
 
 namespace engine
 {
-GameObject* Component::Owner() { return owner_; }
+size_t Component::next_id_{0};
+
+GameObject* Component::Owner() const { return owner_; }
 } // namespace engine
