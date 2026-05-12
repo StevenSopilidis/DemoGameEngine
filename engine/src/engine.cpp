@@ -29,6 +29,7 @@ RenderQueue& Engine::GetRenderQueue() noexcept { return render_queue_; }
 
 void keyCallback(GLFWwindow* window, int key, int, int action, int)
 {
+    std::cout << "KEY is pressed\n";
     auto& manager = Engine::GetInstance().GetInputManager();
     if (action == GLFW_PRESS)
     {
@@ -38,6 +39,30 @@ void keyCallback(GLFWwindow* window, int key, int, int action, int)
     {
         manager.SetKeyPressed(static_cast<std::size_t>(key), false);
     }
+}
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    std::cout << "MOUSE BUTTON is pressed\n";
+    auto& manager = Engine::GetInstance().GetInputManager();
+    if (action == GLFW_PRESS)
+    {
+        manager.SetMouseButtonPressed(button, true);
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        manager.SetMouseButtonPressed(button, false);
+    }
+}
+
+void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    std::cout << "CURSOR moved\n";
+    auto& manager = Engine::GetInstance().GetInputManager();
+    manager.SetMousePositionOld(manager.MousePositionCurr());
+
+    glm::vec2 currentPos(static_cast<float>(xpos), static_cast<float>(ypos));
+    manager.SetMousePositionCurr(currentPos);
 }
 
 bool Engine::Init(int window_width, int window_height)
@@ -71,6 +96,8 @@ bool Engine::Init(int window_width, int window_height)
     }
 
     glfwSetKeyCallback(window_.get(), keyCallback);
+    glfwSetMouseButtonCallback(window_.get(), mouseButtonCallback);
+    glfwSetCursorPosCallback(window_.get(), cursorPositionCallback);
 
     glfwMakeContextCurrent(window_.get());
 
@@ -81,6 +108,7 @@ bool Engine::Init(int window_width, int window_height)
         return false;
     }
 
+    graphics_api_.Init();
     return application_->Init();
 }
 
@@ -110,7 +138,7 @@ void Engine::Run()
         int width;
         int height;
         glfwGetWindowSize(window_.get(), &width, &height);
-        auto aspect = static_cast<float>(width / height);
+        auto aspect = static_cast<float>(width) / static_cast<float>(height);
 
         if (current_scene_)
         {
@@ -128,6 +156,8 @@ void Engine::Run()
         render_queue_.Draw(graphics_api_, cameraData);
 
         glfwSwapBuffers(window_.get());
+
+        input_manager_.SetMousePositionOld(input_manager_.MousePositionCurr());
     }
 }
 

@@ -56,6 +56,12 @@ std::shared_ptr<ShaderProgram> GraphicsApi::CreateShaderProgram(const std::strin
     return std::make_shared<ShaderProgram>(shaderProgramId);
 }
 
+bool GraphicsApi::Init()
+{
+    glEnable(GL_DEPTH_TEST);
+    return true;
+}
+
 void GraphicsApi::BindShaderProgram(ShaderProgram& program) { program.Bind(); }
 
 void GraphicsApi::BindMaterial(Material* material) { material->Bind(); }
@@ -101,6 +107,6 @@ void GraphicsApi::DrawMesh(Mesh* mesh)
 
 void GraphicsApi::SetClearColor(float r, float g, float b, float a) { glClearColor(r, g, b, a); }
 
-void GraphicsApi::ClearBuffers() { glClear(GL_COLOR_BUFFER_BIT); }
+void GraphicsApi::ClearBuffers() { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
 } // namespace engine

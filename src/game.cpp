@@ -1,6 +1,9 @@
 #include "game.h"
 
+#include "GLFW/glfw3.h"
 #include "test_object.h"
+
+#include <iostream>
 
 bool Game::Init()
 {
@@ -8,6 +11,7 @@ bool Game::Init()
     auto* camera = scene_->CreateObject("Camera");
     camera->AddComponent(new engine::CameraComponent);
     camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
+    camera->AddComponent(new engine::PlayerControllerComponent());
 
     scene_->SetMainCamera(camera);
 
@@ -18,6 +22,11 @@ bool Game::Init()
     return true;
 }
 
-void Game::Update(float deltaTime) { scene_->Update(deltaTime); }
+void Game::Update(float deltaTime)
+{
+    auto& inputManager = engine::Engine::GetInstance().GetInputManager();
+
+    scene_->Update(deltaTime);
+}
 
 void Game::Destroy() {}

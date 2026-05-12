@@ -20,12 +20,12 @@ class Component
         return typeId;
     }
 
+  protected:
+    GameObject* owner_{nullptr};
+    friend class GameObject;
+
   private:
     static size_t next_id_;
-
-    GameObject* owner_{nullptr};
-
-    friend class GameObject;
 };
 
 #define COMPONENT(ComponentClass)                                                                  \

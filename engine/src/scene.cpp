@@ -1,6 +1,7 @@
 #include "scene.h"
 
 #include <algorithm>
+#include <iostream>
 
 namespace engine
 {

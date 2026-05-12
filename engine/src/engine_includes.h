@@ -9,6 +9,7 @@
 #include "material.h"
 #include "mesh.h"
 #include "mesh_component.h"
+#include "player_controller_component.h"
 #include "render_queue.h"
 #include "scene.h"
 #include "shader_program.h"

@@ -17,6 +17,8 @@ class GraphicsApi
     std::shared_ptr<ShaderProgram> CreateShaderProgram(const std::string& vertexSource,
                                                        const std::string& fragmentSource);
 
+    bool Init();
+
     void   BindShaderProgram(ShaderProgram& program);
     void   BindMaterial(Material* material);
     GLuint CreateVertexBuffer(const std::vector<float>& vertices);
