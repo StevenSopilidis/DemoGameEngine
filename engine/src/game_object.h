@@ -2,6 +2,7 @@
 
 #include "component.h"
 
+#include <glm/gtc/quaternion.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
 #include <memory>
@@ -45,11 +46,11 @@ class GameObject
     }
 
     [[nodiscard]] const glm::vec3& Position() const;
-    [[nodiscard]] const glm::vec3& Rotation() const;
+    [[nodiscard]] const glm::quat& Rotation() const;
     [[nodiscard]] const glm::vec3& Scale() const;
 
     void SetPosition(glm::vec3 position);
-    void SetRotation(glm::vec3 rotation);
+    void SetRotation(glm::quat rotation);
     void SetScale(glm::vec3 scale);
 
     [[nodiscard]] glm::mat4 GetLocalTransform() const;
@@ -66,7 +67,7 @@ class GameObject
     bool                                     is_alive_{true};
 
     glm::vec3 position_ = glm::vec3(0.0f);
-    glm::vec3 rotation_ = glm::vec3(0.0f);
+    glm::quat rotation_ = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
     glm::vec3 scale_    = glm::vec3(1.0f);
 
     friend class Scene;

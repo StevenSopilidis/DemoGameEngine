@@ -23,22 +23,35 @@ void PlayerControllerComponent::Update(float deltaTime)
         float deltaY = currPos.y - oldPos.y;
 
         // rotation around Y axis
-        rotation.y -= deltaX * sensitivity_ * deltaTime;
+        auto yAngle = -deltaX * sensitivity_ * deltaTime;
+        auto yRot   = glm::angleAxis(yAngle, glm::vec3(0.0, 1.0f, 0.0f));
 
         // rotation around X axis
-        rotation.y -= deltaY * sensitivity_ * deltaTime;
+        auto xAngle = -deltaY * sensitivity_ * deltaTime;
+        auto right  = rotation * glm::vec3(1.0, 0.0f, 0.0f);
+        auto xRot   = glm::angleAxis(xAngle, right);
+
+        auto deltaRot = yRot * xRot;
+        rotation      = glm::normalize(deltaRot * rotation);
 
         owner_->SetRotation(rotation);
     }
 
-    glm::mat4 rotMat(1.0f);
+    if (inputManager.IsMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+    {
+        const auto& oldPos  = inputManager.MousePositionOld();
+        const auto& currPos = inputManager.MousePositionCurr();
 
-    rotMat = glm::rotate(rotMat, rotation.x, glm::vec3(1.0f, 0.0f, 0.0f)); // x-axis
-    rotMat = glm::rotate(rotMat, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f)); // y-axis
-    rotMat = glm::rotate(rotMat, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)); // z-axis
+        float deltaY = currPos.y - oldPos.y;
 
-    glm::vec3 front = glm::normalize(glm::vec3(rotMat * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
-    glm::vec3 right = glm::normalize(glm::vec3(rotMat * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+        auto up       = rotation * glm::vec3(0.0f, 1.0f, 0.0f);
+        auto position = owner_->Position();
+        position += deltaY * up * move_speed_ * deltaTime;
+        owner_->SetPosition(position);
+    }
+
+    auto front = rotation * glm::vec3(0.0f, 0.0f, -1.0f);
+    auto right = rotation * glm::vec3(1.0f, 0.0f, 0.0f);
 
     auto position = owner_->Position();
 

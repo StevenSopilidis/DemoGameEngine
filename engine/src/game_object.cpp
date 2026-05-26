@@ -43,22 +43,23 @@ void GameObject::AddComponent(Component* component)
 }
 
 [[nodiscard]] const glm::vec3& GameObject::Position() const { return position_; }
-[[nodiscard]] const glm::vec3& GameObject::Rotation() const { return rotation_; }
+[[nodiscard]] const glm::quat& GameObject::Rotation() const { return rotation_; }
 [[nodiscard]] const glm::vec3& GameObject::Scale() const { return scale_; }
 
 void GameObject::SetPosition(glm::vec3 position) { position_ = position; }
-void GameObject::SetRotation(glm::vec3 rotation) { rotation_ = rotation; }
+void GameObject::SetRotation(glm::quat rotation) { rotation_ = rotation; }
 void GameObject::SetScale(glm::vec3 scale) { scale_ = scale; };
 
 [[nodiscard]] glm::mat4 GameObject::GetLocalTransform() const
 {
     auto mat = glm::mat4(1.0f);
-    mat      = glm::translate(mat, position_);
+    // transformation
+    mat = glm::translate(mat, position_);
 
-    mat = glm::rotate(mat, rotation_.x, glm::vec3(1.0f, 0.0f, 0.0f)); // x-axis
-    mat = glm::rotate(mat, rotation_.y, glm::vec3(0.0f, 1.0f, 0.0f)); // y-axis
-    mat = glm::rotate(mat, rotation_.z, glm::vec3(0.0f, 0.0f, 1.0f)); // z-axis
+    // rotation
+    mat = mat * glm::mat4_cast(rotation_);
 
+    // scaling
     mat = glm::scale(mat, scale_);
 
     return mat;

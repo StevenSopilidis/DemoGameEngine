@@ -29,7 +29,6 @@ RenderQueue& Engine::GetRenderQueue() noexcept { return render_queue_; }
 
 void keyCallback(GLFWwindow* window, int key, int, int action, int)
 {
-    std::cout << "KEY is pressed\n";
     auto& manager = Engine::GetInstance().GetInputManager();
     if (action == GLFW_PRESS)
     {
@@ -43,7 +42,6 @@ void keyCallback(GLFWwindow* window, int key, int, int action, int)
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    std::cout << "MOUSE BUTTON is pressed\n";
     auto& manager = Engine::GetInstance().GetInputManager();
     if (action == GLFW_PRESS)
     {
@@ -57,7 +55,6 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 
 void cursorPositionCallback(GLFWwindow* window, double xpos, double ypos)
 {
-    std::cout << "CURSOR moved\n";
     auto& manager = Engine::GetInstance().GetInputManager();
     manager.SetMousePositionOld(manager.MousePositionCurr());
 
