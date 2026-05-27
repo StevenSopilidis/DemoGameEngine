@@ -4,6 +4,7 @@
 #include "camera_component.h"
 #include "component.h"
 #include "engine.h"
+#include "fs.h"
 #include "game_object.h"
 #include "input.h"
 #include "material.h"

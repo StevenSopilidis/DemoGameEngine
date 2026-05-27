@@ -172,6 +172,8 @@ void Engine::SetApplication(Application* app) noexcept { application_.reset(app)
 
 Application* Engine::GetApplication() const noexcept { return application_.get(); }
 
+Fs& Engine::GetFs() { return fs_; }
+
 InputManager& Engine::GetInputManager() { return input_manager_; }
 
 GraphicsApi& Engine::GetGraphicsApi() { return graphics_api_; };

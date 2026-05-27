@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 project(EngineCore)
+
+set(ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/config.h.in
+    ${PROJECT_BINARY_DIR}/config.h
+)
 
 set(PROJECT_SOURCE_FILES 
     src/engine.cpp
@@ -17,6 +27,7 @@ set(PROJECT_SOURCE_FILES
     src/mesh_component.cpp
     src/camera_component.cpp
     src/player_controller_component.cpp
+    src/fs.cpp
 )
 
 include_directories(src)
@@ -31,13 +42,23 @@ add_subdirectory(third-party/glew/build/cmake "${CMAKE_CURRENT_BINARY_DIR}/glew_
 
 include_directories(third-party/glew/include)
 
+include_directories(third-party/stb_image)
+
 add_subdirectory(third-party/glm)
 
 set_property(TARGET glew_s PROPERTY FOLDER GLEW)
 set_property(TARGET glew PROPERTY FOLDER GLEW)
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR})
+
 target_link_libraries(${PROJECT_NAME}
     glfw
     glew_s
     glm
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${ASSETS_DIR}
+    ${CMAKE_BINARY_DIR}/assets
 )

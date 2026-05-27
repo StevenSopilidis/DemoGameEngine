@@ -22,6 +22,8 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES})
 add_subdirectory(engine "${CMAKE_CURRENT_BINARY_DIR}/engine_build")
 include_directories(engine/src)
 
+include_directories(engine/third-party/stb_image)
+
 target_link_libraries(${PROJECT_NAME}
     EngineCore
 )

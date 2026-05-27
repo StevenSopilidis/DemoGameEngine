@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fs.h"
 #include "graphics_api.h"
 #include "input.h"
 #include "render_queue.h"
@@ -39,6 +40,7 @@ class Engine
 
     InputManager& GetInputManager();
     GraphicsApi&  GetGraphicsApi();
+    Fs&           GetFs();
 
     Scene* CurrentScene();
     void   SetCurrentScene(Scene* scene);
@@ -54,6 +56,7 @@ class Engine
     GLFWwindowPtr                                  window_;
     InputManager                                   input_manager_;
     GraphicsApi                                    graphics_api_;
+    Fs                                             fs_;
     RenderQueue                                    render_queue_;
 };
 } // namespace engine
