@@ -5,6 +5,7 @@
 namespace engine
 {
 class ShaderProgram;
+class Texture;
 
 class Material
 {
@@ -12,13 +13,15 @@ class Material
     void SetShaderProgram(std::shared_ptr<ShaderProgram>& shaderProgram);
     void SetParam(const std::string& name, float value);
     void SetParam(const std::string& name, float v0, float v1);
+    void SetParam(const std::string& name, const std::shared_ptr<Texture>& texture);
     void Bind();
 
     std::shared_ptr<ShaderProgram> GetShaderProgram();
 
   private:
-    std::shared_ptr<ShaderProgram>                           shader_program_;
-    std::unordered_map<std::string, float>                   float_params_;
-    std::unordered_map<std::string, std::pair<float, float>> float2_params_;
+    std::shared_ptr<ShaderProgram>                            shader_program_;
+    std::unordered_map<std::string, std::shared_ptr<Texture>> textures_;
+    std::unordered_map<std::string, float>                    float_params_;
+    std::unordered_map<std::string, std::pair<float, float>>  float2_params_;
 };
 } // namespace engine

@@ -28,6 +28,7 @@ set(PROJECT_SOURCE_FILES
     src/camera_component.cpp
     src/player_controller_component.cpp
     src/fs.cpp
+    src/texture.cpp
 )
 
 include_directories(src)

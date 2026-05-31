@@ -1,6 +1,7 @@
 #include "shader_program.h"
 
 #include "glm/gtc/type_ptr.hpp"
+#include "texture.h"
 
 namespace engine
 {
@@ -9,7 +10,11 @@ ShaderProgram::ShaderProgram(GLuint shaderProgramId) : shader_program_id_{shader
 
 ShaderProgram::~ShaderProgram() { glDeleteProgram(shader_program_id_); }
 
-void ShaderProgram::Bind() { glUseProgram(shader_program_id_); }
+void ShaderProgram::Bind()
+{
+    glUseProgram(shader_program_id_);
+    current_texture_unit_ = 0;
+}
 
 GLint ShaderProgram::GetUniformLocation(const std::string& name)
 {
@@ -40,6 +45,14 @@ void ShaderProgram::SetUniform(const std::string& name, const glm::mat4& mat)
 {
     auto location = GetUniformLocation(name);
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void ShaderProgram::SetTexture(const std::string& name, Texture* texture)
+{
+    auto location = GetUniformLocation(name);
+    glActiveTexture(GL_TEXTURE0 + current_texture_unit_);
+    glBindTexture(GL_TEXTURE_2D, texture->Id());
+    glUniform1i(location, current_texture_unit_);
 }
 
 } // namespace engine

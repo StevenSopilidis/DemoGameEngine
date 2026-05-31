@@ -1,6 +1,7 @@
 #include "material.h"
 
 #include "shader_program.h"
+#include "texture.h"
 
 namespace engine
 {
@@ -36,6 +37,16 @@ void Material::Bind()
     {
         shader_program_->SetUniform(param.first, param.second.first, param.second.second);
     }
+
+    for (const auto& param : textures_)
+    {
+        shader_program_->SetTexture(param.first, param.second.get());
+    }
+}
+
+void Material::SetParam(const std::string& name, const std::shared_ptr<Texture>& texture)
+{
+    textures_[name] = texture;
 }
 
 } // namespace engine

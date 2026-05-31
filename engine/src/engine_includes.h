@@ -14,4 +14,5 @@
 #include "render_queue.h"
 #include "scene.h"
 #include "shader_program.h"
+#include "texture.h"
 #include "vertex_layout.h"
