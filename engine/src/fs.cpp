@@ -2,6 +2,9 @@
 
 #include "config.h"
 
+#include <fstream>
+#include <iostream>
+
 #if defined _WIN32
 #include "window.h"
 #elif defined(__APPLE__)
@@ -14,7 +17,7 @@
 
 namespace engine
 {
-std::filesystem::path Fs::GetExecutableFolder() const
+std::filesystem::path Fs::GetExecutableFolder()
 {
 #if defined _WIN32
     wchar_t buff[MAX_PATH];
@@ -34,7 +37,7 @@ std::filesystem::path Fs::GetExecutableFolder() const
 #endif
 }
 
-std::filesystem::path Fs::GetAssetsFolder() const
+std::filesystem::path Fs::GetAssetsFolder()
 {
 #if defined(ASSETS_ROOT)
     auto path = std::filesystem::path(std::string(ASSETS_ROOT));
@@ -45,6 +48,40 @@ std::filesystem::path Fs::GetAssetsFolder() const
 #endif
 
     return std::filesystem::weakly_canonical(GetExecutableFolder() / "assets");
+}
+
+std::vector<char> Fs::LoadFile(const std::filesystem::path& path)
+{
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+
+    if (!file.is_open())
+    {
+        return {};
+    }
+
+    auto size = file.tellg();
+    file.seekg(0);
+
+    std::vector<char> buffer(size);
+
+    if (!file.read(buffer.data(), size))
+    {
+        return {};
+    }
+
+    return buffer;
+}
+
+std::vector<char> Fs::LoadAssetFile(const std::string& relative_path)
+{
+    return LoadFile(GetAssetsFolder() / relative_path);
+}
+
+std::string Fs::LoadAssetFileText(const std::string& relative_path)
+{
+    auto buffer = LoadAssetFile(relative_path);
+
+    return {buffer.begin(), buffer.end()};
 }
 
 } // namespace engine

@@ -1,12 +1,17 @@
 #pragma once
 
 #include <filesystem>
+#include <vector>
 namespace engine
 {
 class Fs
 {
   public:
-    [[nodiscard]] std::filesystem::path GetExecutableFolder() const; 
-    [[nodiscard]] std::filesystem::path GetAssetsFolder() const;
+    static std::filesystem::path GetExecutableFolder();
+    static std::filesystem::path GetAssetsFolder();
+
+    static std::vector<char> LoadFile(const std::filesystem::path& path);
+    static std::vector<char> LoadAssetFile(const std::string& relative_path);
+    static std::string       LoadAssetFileText(const std::string& relative_path);
 };
 } // namespace engine
