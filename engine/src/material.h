@@ -1,7 +1,9 @@
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <unordered_map>
+
 namespace engine
 {
 class ShaderProgram;
@@ -17,6 +19,8 @@ class Material
     void Bind();
 
     std::shared_ptr<ShaderProgram> GetShaderProgram();
+
+    static std::shared_ptr<Material> Load(const std::filesystem::path& path);
 
   private:
     std::shared_ptr<ShaderProgram>                            shader_program_;

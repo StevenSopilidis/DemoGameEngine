@@ -1,22 +1,19 @@
 #include "test_object.h"
 
-#include "GLFW/glfw3.h"
+#include "material.h"
 #include "mesh_component.h"
-#include "string"
+
+#include <iostream>
 
 TestObject::TestObject()
 {
-    std::string vertexShaderSource   = engine::Fs::LoadAssetFileText("shaders/vertex.glsl");
-    std::string fragmentShaderSource = engine::Fs::LoadAssetFileText("shaders/fragment.glsl");
+    auto material = engine::Material::Load("materials/brick.mat.json");
 
-    auto& graphicsAPI   = engine::Engine::GetInstance().GetGraphicsApi();
-    auto  shaderProgram = graphicsAPI.CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
-
-    auto texture = engine::Texture::Load("brick.png");
-
-    auto material = std::make_shared<engine::Material>();
-    material->SetShaderProgram(shaderProgram);
-    material->SetParam("BrickTexture", texture);
+    if (material == nullptr)
+    {
+        std::cout << "Material could not be loaded\n";
+        return;
+    }
 
     std::vector<float> vertices = {
         // front face

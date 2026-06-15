@@ -72,12 +72,12 @@ std::vector<char> Fs::LoadFile(const std::filesystem::path& path)
     return buffer;
 }
 
-std::vector<char> Fs::LoadAssetFile(const std::string& relative_path)
+std::vector<char> Fs::LoadAssetFile(const std::filesystem::path& relative_path)
 {
     return LoadFile(GetAssetsFolder() / relative_path);
 }
 
-std::string Fs::LoadAssetFileText(const std::string& relative_path)
+std::string Fs::LoadAssetFileText(const std::filesystem::path& relative_path)
 {
     auto buffer = LoadAssetFile(relative_path);
 
