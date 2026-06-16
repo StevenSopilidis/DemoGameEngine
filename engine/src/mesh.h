@@ -3,6 +3,9 @@
 #include "GL/glew.h"
 #include "vertex_layout.h"
 
+#include <filesystem>
+#include <memory>
+
 namespace engine
 {
 class Mesh
@@ -17,6 +20,8 @@ class Mesh
 
     void Bind();
     void Draw();
+
+    static std::shared_ptr<Mesh> Load(const std::filesystem::path& path);
 
   private:
     VertexLayout vertex_layout_;

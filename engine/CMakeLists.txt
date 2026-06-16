@@ -47,6 +47,8 @@ include_directories(third-party/stb_image)
 
 include_directories(third-party/json)
 
+include_directories(third-party/cgltf)
+
 add_subdirectory(third-party/glm)
 
 set_property(TARGET glew_s PROPERTY FOLDER GLEW)
