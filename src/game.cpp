@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include "GLFW/glfw3.h"
+#include "light_component.h"
 #include "test_object.h"
 
 #include <iostream>
@@ -16,6 +17,11 @@ bool Game::Init()
     scene_->SetMainCamera(camera);
 
     scene_->CreateObject<TestObject>("TestObject");
+
+    auto light     = scene_->CreateObject("Light");
+    auto lightComp = new engine::LightComponent();
+    lightComp->SetColor(glm::vec3(1.0f));
+    light->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
 
     engine::Engine::GetInstance().SetCurrentScene(scene_);
 

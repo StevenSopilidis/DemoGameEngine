@@ -56,6 +56,8 @@ class GameObject
     [[nodiscard]] glm::mat4 GetLocalTransform() const;
     [[nodiscard]] glm::mat4 GetWorldTransform() const;
 
+    [[nodiscard]] glm::vec3 GetWorldPosition() const;
+
   protected:
     GameObject() = default;
 

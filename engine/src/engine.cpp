@@ -130,7 +130,8 @@ void Engine::Run()
         graphics_api_.SetClearColor(1.f, 1.f, 1.f, 1.f);
         graphics_api_.ClearBuffers();
 
-        CameraData cameraData;
+        CameraData             cameraData;
+        std::vector<LightData> lights;
 
         int width;
         int height;
@@ -148,9 +149,11 @@ void Engine::Run()
                     cameraData.projectionMatrix = cameraComponent->GetProjectionMatrix(aspect);
                 }
             }
+
+            lights = current_scene_->CollectLights();
         }
 
-        render_queue_.Draw(graphics_api_, cameraData);
+        render_queue_.Draw(graphics_api_, cameraData, lights);
 
         glfwSwapBuffers(window_.get());
 

@@ -55,4 +55,10 @@ void ShaderProgram::SetTexture(const std::string& name, Texture* texture)
     glUniform1i(location, current_texture_unit_);
 }
 
+void ShaderProgram::SetUniform(const std::string& name, const glm::vec3& val)
+{
+    auto location = GetUniformLocation(name);
+    glUniform3fv(location, 1, glm::value_ptr(val));
+}
+
 } // namespace engine

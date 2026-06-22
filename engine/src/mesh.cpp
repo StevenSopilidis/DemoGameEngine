@@ -130,7 +130,7 @@ std::shared_ptr<Mesh> Mesh::Load(const std::filesystem::path& path)
             }
 
             VertexLayout                   layout;
-            std::array<cgltf_accessor*, 3> accessors{}; // pos, color, uvs
+            std::array<cgltf_accessor*, 4> accessors{}; // pos, color, uvs, normals
 
             for (cgltf_size ai{0}; ai < primitive.attributes_count; ++ai)
             {
@@ -179,6 +179,16 @@ std::shared_ptr<Mesh> Mesh::Load(const std::filesystem::path& path)
                     element.size                      = 2;
                 }
                 break;
+                case cgltf_attribute_type_normal:
+                {
+                    accessors[VertexElement::NormalIndex] = acc;
+                    element.index                         = VertexElement::NormalIndex;
+                    element.size                          = 3;
+                }
+                break;
+
+                default:
+                    continue;
                 }
 
                 if (element.size > 0)

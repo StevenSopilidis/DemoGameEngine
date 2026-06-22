@@ -9,7 +9,8 @@ namespace engine
 {
 void RenderQueue::Submit(RenderCommand& command) { commands_.push_back(command); }
 
-void RenderQueue::Draw(GraphicsApi& api, const CameraData& cameraData)
+void RenderQueue::Draw(GraphicsApi& api, const CameraData& cameraData,
+                       const std::vector<LightData>& lights)
 {
     for (auto& command : commands_)
     {
@@ -19,6 +20,13 @@ void RenderQueue::Draw(GraphicsApi& api, const CameraData& cameraData)
 
         shaderProgram->SetUniform("uView", cameraData.viewMatrix);
         shaderProgram->SetUniform("uProjection", cameraData.projectionMatrix);
+
+        if (!lights.empty())
+        {
+            auto& light = lights.at(0);
+            shaderProgram->SetUniform("uLight.color", light.color);
+            shaderProgram->SetUniform("uLight.position", light.pos);
+        }
 
         api.BindMesh(command.mesh);
         api.DrawMesh(command.mesh);

@@ -1,5 +1,7 @@
 #include "scene.h"
 
+#include "light_component.h"
+
 #include <algorithm>
 #include <iostream>
 
@@ -150,5 +152,33 @@ bool Scene::SetParent(GameObject* obj, GameObject* parent)
 void Scene::SetMainCamera(GameObject* camera) { main_camera_ = camera; }
 
 GameObject* Scene::MainCamera() const { return main_camera_; }
+
+std::vector<LightData> Scene::CollectLights()
+{
+    std::vector<LightData> lights;
+
+    for (auto& obj : objects_)
+    {
+        CollectLightsRecursive(obj.get(), lights);
+    }
+
+    return lights;
+}
+
+void Scene::CollectLightsRecursive(GameObject* obj, std::vector<LightData>& out)
+{
+    if (auto light = obj->GetComponent<LightComponent>())
+    {
+        LightData data;
+        data.color = light->Color();
+        data.pos   = obj->GetWorldPosition();
+        out.push_back(data);
+    }
+
+    for (auto& child : obj->children_)
+    {
+        CollectLightsRecursive(child.get(), out);
+    }
+}
 
 } // namespace engine
