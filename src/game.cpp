@@ -22,6 +22,7 @@ bool Game::Init()
     auto lightComp = new engine::LightComponent();
     lightComp->SetColor(glm::vec3(1.0f));
     light->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+    light->AddComponent(lightComp);
 
     engine::Engine::GetInstance().SetCurrentScene(scene_);
 

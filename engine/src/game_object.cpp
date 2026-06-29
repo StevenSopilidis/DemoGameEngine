@@ -78,7 +78,7 @@ void GameObject::SetScale(glm::vec3 scale) { scale_ = scale; };
 glm::vec3 GameObject::GetWorldPosition() const
 {
     glm::vec4 hom = GetWorldTransform() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    return glm::vec3(hom) * hom.w;
+    return glm::vec3(hom) / hom.w;
 }
 
 } // namespace engine
