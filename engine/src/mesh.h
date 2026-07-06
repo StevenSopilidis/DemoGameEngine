@@ -21,8 +21,6 @@ class Mesh
     void Bind();
     void Draw();
 
-    static std::shared_ptr<Mesh> Load(const std::filesystem::path& path);
-
   private:
     VertexLayout vertex_layout_;
     std::size_t  vertex_count_{0};

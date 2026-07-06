@@ -1,7 +1,252 @@
 #include "game_object.h"
 
+#include "component.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "graphics_api.h"
+#include "material.h"
+#include "mesh.h"
+#include "mesh_component.h"
+#include "texture.h"
+#include "vertex_layout.h"
+
 #include <algorithm>
 #include <glm/gtc/matrix_transform.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/matrix_decompose.hpp"
+
+#define CGLTF_IMPLEMENTATION
+#include "cgltf.h"
+#include "engine.h"
+
+namespace
+{
+
+void ParseGLTFNode(cgltf_node* node, engine::GameObject* parent,
+                   const std::filesystem::path& folder)
+{
+    auto obj = parent->GetScene()->CreateObject(node->name, parent);
+
+    if (node->has_matrix)
+    {
+        auto      mat = glm::make_mat4(node->matrix);
+        glm::vec3 translation, scale, skew;
+        glm::vec4 perspective;
+        glm::quat orentation;
+        glm::decompose(mat, scale, orentation, translation, skew, perspective);
+
+        obj->SetPosition(translation);
+        obj->SetRotation(orentation);
+        obj->SetScale(scale);
+    }
+    else
+    {
+        if (node->has_translation)
+        {
+            obj->SetPosition(
+                glm::vec3(node->translation[0], node->translation[1], node->translation[2]));
+        }
+
+        if (node->has_rotation)
+        {
+            obj->SetRotation(glm::quat(node->rotation[3], node->rotation[0], node->rotation[1],
+                                       node->rotation[2]));
+        }
+
+        if (node->has_scale)
+        {
+            obj->SetScale(glm::vec3(node->scale[2], node->scale[1], node->scale[2]));
+        }
+    }
+
+    if (node->mesh)
+    {
+        for (cgltf_size pi{}; pi < node->mesh->primitives_count; pi++)
+        {
+            auto& primitive = node->mesh->primitives[pi];
+            if (primitive.type != cgltf_primitive_type_triangles)
+            {
+                continue;
+            }
+
+            auto readFloats = [](const cgltf_accessor* acc, cgltf_size i, float* out, int n)
+            {
+                std::fill(out, out + n, 0.0f);
+                return cgltf_accessor_read_float(acc, i, out, n) == 1;
+            };
+
+            auto readIndex = [](const cgltf_accessor* acc, cgltf_size i)
+            {
+                cgltf_uint out = 0;
+                auto       ok  = cgltf_accessor_read_uint(acc, i, &out, 1);
+                return ok ? static_cast<uint32_t>(out) : 0;
+            };
+
+            engine::VertexLayout           layout;
+            std::array<cgltf_accessor*, 4> accessors{}; // pos, color, uvs, normals
+
+            for (cgltf_size ai{0}; ai < primitive.attributes_count; ++ai)
+            {
+                auto& attr = primitive.attributes[ai];
+                auto  acc  = attr.data;
+
+                if (!acc)
+                {
+                    continue;
+                }
+
+                engine::VertexElement element;
+                element.type = GL_FLOAT;
+
+                switch (attr.type)
+                {
+
+                case cgltf_attribute_type_position:
+                {
+                    accessors[engine::VertexElement::PositionIndex] = acc;
+                    element.index = engine::VertexElement::PositionIndex;
+                    element.size  = 3;
+                }
+                break;
+                case cgltf_attribute_type_color:
+                {
+                    if (attr.index != 0)
+                    {
+                        // only use first color channel
+                        continue;
+                    }
+                    accessors[engine::VertexElement::ColorIndex] = acc;
+                    element.index = engine::VertexElement::ColorIndex;
+                    element.size  = 3;
+                }
+                break;
+                case cgltf_attribute_type_texcoord:
+                {
+                    if (attr.index != 0)
+                    {
+                        // only use first text coord
+                        continue;
+                    }
+                    accessors[engine::VertexElement::UVIndex] = acc;
+                    element.index                             = engine::VertexElement::UVIndex;
+                    element.size                              = 2;
+                }
+                break;
+                case cgltf_attribute_type_normal:
+                {
+                    accessors[engine::VertexElement::NormalIndex] = acc;
+                    element.index = engine::VertexElement::NormalIndex;
+                    element.size  = 3;
+                }
+                break;
+
+                default:
+                    continue;
+                }
+
+                if (element.size > 0)
+                {
+                    element.offset = layout.stride;
+                    layout.stride += element.size * sizeof(float);
+                    layout.elements.push_back(element);
+                }
+            }
+
+            if (accessors[engine::VertexElement::PositionIndex] == nullptr)
+            {
+                continue;
+            }
+
+            auto vertexCount = accessors[engine::VertexElement::PositionIndex]->count;
+
+            std::vector<float> vertices;
+            vertices.resize((layout.stride / sizeof(float)) * vertexCount);
+
+            for (cgltf_size vi{0}; vi < vertexCount; ++vi)
+            {
+                for (auto& el : layout.elements)
+                {
+                    if (accessors[el.index] == nullptr)
+                    {
+                        continue;
+                    }
+
+                    auto  index   = (vi * layout.stride + el.offset) / sizeof(float);
+                    auto* outData = &vertices[index];
+                    readFloats(accessors[el.index], vi, outData, el.size);
+                }
+            }
+
+            std::shared_ptr<engine::Mesh> mesh;
+
+            if (primitive.indices != nullptr)
+            {
+                auto                  indexCount = primitive.indices->count;
+                std::vector<uint32_t> indices(indexCount);
+
+                for (cgltf_size i{0}; i < indexCount; ++i)
+                {
+                    indices[i] = readIndex(primitive.indices, i);
+                }
+
+                mesh = std::make_shared<engine::Mesh>(layout, vertices, indices);
+            }
+            else
+            {
+                mesh = std::make_shared<engine::Mesh>(layout, vertices);
+            }
+
+            auto mat = std::make_shared<engine::Material>();
+            mat->SetShaderProgram(
+                engine::Engine::GetInstance().GetGraphicsApi().GetDefaultSharedProgram());
+
+            if (primitive.material)
+            {
+                auto* gltfMat = primitive.material;
+                if (gltfMat->has_pbr_metallic_roughness)
+                {
+                    auto  pbr     = gltfMat->pbr_metallic_roughness;
+                    auto* texture = pbr.base_color_texture.texture;
+
+                    if (texture && texture->image)
+                    {
+                        if (texture->image->uri)
+                        {
+                            auto path          = folder / std::string(texture->image->uri);
+                            auto engineTexture = engine::Texture::Load(path.string());
+                            mat->SetParam("baseColorTexture", engineTexture);
+                        }
+                    }
+                }
+                else if (gltfMat->has_pbr_specular_glossiness)
+                {
+                    auto pbr     = gltfMat->pbr_specular_glossiness;
+                    auto texture = pbr.diffuse_texture.texture;
+
+                    if (texture && texture->image)
+                    {
+                        if (texture->image->uri)
+                        {
+                            auto path          = folder / std::string(texture->image->uri);
+                            auto engineTexture = engine::Texture::Load(path.string());
+                            mat->SetParam("baseColorTexture", engineTexture);
+                        }
+                    }
+                }
+
+                obj->AddComponent(new engine::MeshComponent(mat, mesh));
+            }
+        }
+    }
+
+    for (cgltf_size ci{}; ci < node->children_count; ci++)
+    {
+        ParseGLTFNode(node->children[ci], obj, folder);
+    }
+}
+
+} // namespace
 
 namespace engine
 {
@@ -80,5 +325,61 @@ glm::vec3 GameObject::GetWorldPosition() const
     glm::vec4 hom = GetWorldTransform() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
     return glm::vec3(hom) / hom.w;
 }
+
+GameObject* GameObject::LoadGLTF(const std::filesystem::path& path)
+{
+    auto content = Engine::GetInstance().GetFs().LoadAssetFile(path);
+
+    if (content.empty())
+    {
+        return nullptr;
+    }
+
+    cgltf_options opts{};
+    cgltf_data*   data{nullptr};
+
+    cgltf_result res = cgltf_parse(&opts, content.data(), content.size(), &data);
+    if (res != cgltf_result_success)
+    {
+        return nullptr;
+    }
+
+    auto fullPath           = Engine::GetInstance().GetFs().GetAssetsFolder() / path;
+    auto fullFolderPath     = fullPath.remove_filename();
+    auto relativeFolderPath = std::filesystem::path(path).remove_filename();
+
+    res = cgltf_load_buffers(&opts, data, fullFolderPath.c_str());
+
+    if (res != cgltf_result_success)
+    {
+        cgltf_free(data);
+        return nullptr;
+    }
+
+    auto* resultObj = Engine::GetInstance().CurrentScene()->CreateObject("Result");
+    auto* scene     = &data->scenes[0];
+
+    for (cgltf_size i{}; i < scene->nodes_count; i++)
+    {
+        auto* node = scene->nodes[i];
+        ParseGLTFNode(node, resultObj, relativeFolderPath);
+    }
+
+    cgltf_free(data);
+
+    return resultObj;
+}
+
+bool GameObject::SetParent(GameObject* parent)
+{
+    if (!scene_)
+    {
+        return false;
+    }
+
+    return scene_->SetParent(this, parent);
+}
+
+Scene* GameObject::GetScene() { return scene_; }
 
 } // namespace engine

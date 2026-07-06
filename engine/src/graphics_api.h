@@ -14,10 +14,10 @@ class Mesh;
 class GraphicsApi
 {
   public:
-    std::shared_ptr<ShaderProgram> CreateShaderProgram(const std::string& vertexSource,
-                                                       const std::string& fragmentSource);
-
-    bool Init();
+    std::shared_ptr<ShaderProgram>  CreateShaderProgram(const std::string& vertexSource,
+                                                        const std::string& fragmentSource);
+    std::shared_ptr<ShaderProgram>& GetDefaultSharedProgram();
+    bool                            Init();
 
     void   BindShaderProgram(ShaderProgram& program);
     void   BindMaterial(Material* material);
@@ -27,5 +27,8 @@ class GraphicsApi
     void   DrawMesh(Mesh* mesh);
     void   SetClearColor(float r, float g, float b, float a);
     void   ClearBuffers();
+
+  private:
+    std::shared_ptr<ShaderProgram> default_shader_program_;
 };
 } // namespace engine

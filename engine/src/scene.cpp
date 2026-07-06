@@ -26,6 +26,7 @@ GameObject* Scene::CreateObject(const std::string& name, GameObject* parent)
 {
     auto* obj = new GameObject();
     obj->SetName(name);
+    obj->scene_ = this;
     SetParent(obj, parent);
 
     return obj;

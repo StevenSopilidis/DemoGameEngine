@@ -2,6 +2,7 @@
 
 #include "component.h"
 
+#include <filesystem>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
@@ -25,6 +26,8 @@ class GameObject
     [[nodiscard]] const std::string& Name() const;
     void                             SetName(const std::string& name);
     [[nodiscard]] GameObject*        Parent() const;
+    bool                             SetParent(GameObject* parent);
+    Scene*                           GetScene();
     [[nodiscard]] bool               IsAlive() const;
     void                             MarkForDestroy();
 
@@ -58,12 +61,15 @@ class GameObject
 
     [[nodiscard]] glm::vec3 GetWorldPosition() const;
 
+    static GameObject* LoadGLTF(const std::filesystem::path& path);
+
   protected:
     GameObject() = default;
 
   private:
     std::string                              name_;
-    GameObject*                              parent_{nullptr};
+    Scene*                                   scene_{};
+    GameObject*                              parent_{};
     std::vector<std::unique_ptr<GameObject>> children_;
     std::vector<std::unique_ptr<Component>>  components_;
     bool                                     is_alive_{true};

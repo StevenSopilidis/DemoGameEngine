@@ -23,6 +23,7 @@ class Scene
     {
         auto obj = new T();
         obj->SetName(name);
+        obj->scene_ = this;
         SetParent(obj, parent);
 
         return obj;

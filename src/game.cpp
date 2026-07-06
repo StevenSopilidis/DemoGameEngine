@@ -8,7 +8,8 @@
 
 bool Game::Init()
 {
-    scene_       = new engine::Scene();
+    scene_ = new engine::Scene();
+    engine::Engine::GetInstance().SetCurrentScene(scene_);
     auto* camera = scene_->CreateObject("Camera");
     camera->AddComponent(new engine::CameraComponent);
     camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
@@ -16,15 +17,15 @@ bool Game::Init()
 
     scene_->SetMainCamera(camera);
 
-    scene_->CreateObject<TestObject>("TestObject");
+    // scene_->CreateObject<TestObject>("TestObject");
 
-    auto light     = scene_->CreateObject("Light");
-    auto lightComp = new engine::LightComponent();
-    lightComp->SetColor(glm::vec3(1.0f));
-    light->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
-    light->AddComponent(lightComp);
+    // auto light     = scene_->CreateObject("Light");
+    // auto lightComp = new engine::LightComponent();
+    // lightComp->SetColor(glm::vec3(1.0f));
+    // light->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
+    // light->AddComponent(lightComp);
 
-    engine::Engine::GetInstance().SetCurrentScene(scene_);
+    auto suzzaneObj = engine::GameObject::LoadGLTF("models/suzzanne.gltf");
 
     return true;
 }
