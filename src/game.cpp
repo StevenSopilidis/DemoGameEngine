@@ -8,24 +8,34 @@
 
 bool Game::Init()
 {
+    auto& fs      = engine::Engine::GetInstance().GetFs();
+    auto  texture = engine::Texture::Load("textures/brick.png");
+    if (!texture)
+    {
+        std::cout << "Failed to load brick.png\n";
+        return false;
+    }
+
     scene_ = new engine::Scene();
     engine::Engine::GetInstance().SetCurrentScene(scene_);
-    auto* camera = scene_->CreateObject("Camera");
-    camera->AddComponent(new engine::CameraComponent);
+
+    auto camera = scene_->CreateObject("Camera");
+    camera->AddComponent(new engine::CameraComponent());
     camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
     camera->AddComponent(new engine::PlayerControllerComponent());
 
     scene_->SetMainCamera(camera);
 
-    // scene_->CreateObject<TestObject>("TestObject");
+    scene_->CreateObject<TestObject>("TestObject");
 
-    // auto light     = scene_->CreateObject("Light");
-    // auto lightComp = new engine::LightComponent();
-    // lightComp->SetColor(glm::vec3(1.0f));
-    // light->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
-    // light->AddComponent(lightComp);
+    auto suzanneObject = engine::GameObject::LoadGLTF("models/Suzanne.gltf");
+    suzanneObject->SetPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 
-    auto suzzaneObj = engine::GameObject::LoadGLTF("models/suzzanne.gltf");
+    auto light     = scene_->CreateObject("Light");
+    auto lightComp = new engine::LightComponent();
+    lightComp->SetColor(glm::vec3(1.0f));
+    light->AddComponent(lightComp);
+    light->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));
 
     return true;
 }

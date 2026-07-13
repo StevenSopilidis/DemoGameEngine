@@ -56,7 +56,7 @@ void ParseGLTFNode(cgltf_node* node, engine::GameObject* parent,
 
         if (node->has_scale)
         {
-            obj->SetScale(glm::vec3(node->scale[2], node->scale[1], node->scale[2]));
+            obj->SetScale(glm::vec3(node->scale[0], node->scale[1], node->scale[2]));
         }
     }
 
