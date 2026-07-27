@@ -5,6 +5,8 @@
 #include "mesh.h"
 #include "shader_program.h"
 
+#include <iostream>
+
 namespace engine
 {
 void RenderQueue::Submit(RenderCommand& command) { commands_.push_back(command); }
@@ -20,6 +22,7 @@ void RenderQueue::Draw(GraphicsApi& api, const CameraData& cameraData,
 
         shaderProgram->SetUniform("uView", cameraData.viewMatrix);
         shaderProgram->SetUniform("uProjection", cameraData.projectionMatrix);
+        shaderProgram->SetUniform("uCameraPos", cameraData.position);
 
         if (!lights.empty())
         {

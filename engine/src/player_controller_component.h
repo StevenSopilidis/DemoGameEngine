@@ -12,7 +12,7 @@ class PlayerControllerComponent : public Component
     void Update(float deltaTime) override;
 
   private:
-    float sensitivity_{0.3f};
-    float move_speed_{1.4f};
+    float sensitivity_{2.0f};
+    float move_speed_{3.0f};
 };
 } // namespace engine

@@ -5,6 +5,7 @@
 #include "input.h"
 #include "render_queue.h"
 #include "scene.h"
+#include "texture.h"
 
 #include <chrono>
 #include <memory>
@@ -42,6 +43,8 @@ class Engine
     GraphicsApi&  GetGraphicsApi();
     Fs&           GetFs();
 
+    TextureManager& GetTextureManager();
+
     Scene* CurrentScene();
     void   SetCurrentScene(Scene* scene);
 
@@ -56,6 +59,7 @@ class Engine
     GLFWwindowPtr                                  window_;
     InputManager                                   input_manager_;
     GraphicsApi                                    graphics_api_;
+    TextureManager                                 texture_manager_;
     Fs                                             fs_;
     RenderQueue                                    render_queue_;
 };

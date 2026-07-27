@@ -53,7 +53,17 @@ void Texture::Init(int width, int height, int num_channels, unsigned char* data)
     glGenTextures(1, &texture_id_);
     glBindTexture(GL_TEXTURE_2D, texture_id_);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    GLint  internalFormat = GL_RGB;
+    GLenum format         = GL_RGB;
+
+    if (num_channels == 4)
+    {
+        internalFormat = GL_RGBA;
+        format         = GL_RGBA;
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE,
+                 data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     // wrapping
@@ -63,6 +73,23 @@ void Texture::Init(int width, int height, int num_channels, unsigned char* data)
     // filtering
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+std::shared_ptr<Texture> TextureManager::GetOrLoadTexture(const std::filesystem::path& path)
+{
+    auto it = textures_.find(path);
+    if (it != textures_.end())
+    {
+        return it->second;
+    }
+
+    auto texture = Texture::Load(path);
+    if (texture != nullptr)
+    {
+        textures_[path] = texture;
+    }
+
+    return texture;
 }
 
 } // namespace engine

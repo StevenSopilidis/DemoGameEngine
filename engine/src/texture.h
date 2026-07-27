@@ -2,7 +2,9 @@
 
 #include "GL/glew.h"
 
+#include <filesystem>
 #include <memory>
+#include <unordered_map>
 
 namespace engine
 {
@@ -23,5 +25,14 @@ class Texture
     int    width_{0};
     int    height_{0};
     int    num_channels_{0};
+};
+
+class TextureManager
+{
+  public:
+    std::shared_ptr<Texture> GetOrLoadTexture(const std::filesystem::path& path);
+
+  private:
+    std::unordered_map<std::filesystem::path, std::shared_ptr<Texture>> textures_;
 };
 } // namespace engine

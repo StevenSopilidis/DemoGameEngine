@@ -19,7 +19,7 @@ bool Game::Init()
     scene_ = new engine::Scene();
     engine::Engine::GetInstance().SetCurrentScene(scene_);
 
-    auto camera = scene_->CreateObject("Camera");
+    auto* camera = scene_->CreateObject("Camera");
     camera->AddComponent(new engine::CameraComponent());
     camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
     camera->AddComponent(new engine::PlayerControllerComponent());
@@ -28,11 +28,16 @@ bool Game::Init()
 
     scene_->CreateObject<TestObject>("TestObject");
 
-    auto suzanneObject = engine::GameObject::LoadGLTF("models/Suzanne.gltf");
+    auto* suzanneObject = engine::GameObject::LoadGLTF("models/suzanne/Suzanne.gltf");
     suzanneObject->SetPosition(glm::vec3(0.0f, 0.0f, -5.0f));
 
-    auto light     = scene_->CreateObject("Light");
-    auto lightComp = new engine::LightComponent();
+    auto* gunObject = engine::GameObject::LoadGLTF("models/sten_gunmachine_carbine/scene.gltf");
+    gunObject->SetParent(camera);
+    gunObject->SetPosition(glm::vec3(0.75f, -0.5f, -0.75f));
+    gunObject->SetScale(glm::vec3(-1.0f, 1.0f, 1.0f));
+
+    auto* light     = scene_->CreateObject("Light");
+    auto* lightComp = new engine::LightComponent();
     lightComp->SetColor(glm::vec3(1.0f));
     light->AddComponent(lightComp);
     light->SetPosition(glm::vec3(0.0f, 5.0f, 0.0f));

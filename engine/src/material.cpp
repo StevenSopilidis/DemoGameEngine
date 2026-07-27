@@ -5,6 +5,8 @@
 #include "shader_program.h"
 #include "texture.h"
 
+#include <iostream>
+
 namespace engine
 {
 void Material::SetShaderProgram(std::shared_ptr<ShaderProgram>& shaderProgram)

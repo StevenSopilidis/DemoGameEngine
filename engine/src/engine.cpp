@@ -147,6 +147,7 @@ void Engine::Run()
                 {
                     cameraData.viewMatrix       = cameraComponent->GetViewMatrix();
                     cameraData.projectionMatrix = cameraComponent->GetProjectionMatrix(aspect);
+                    cameraData.position         = cameraObject->GetWorldPosition();
                 }
             }
 
@@ -176,6 +177,8 @@ void Engine::SetApplication(Application* app) noexcept { application_.reset(app)
 Application* Engine::GetApplication() const noexcept { return application_.get(); }
 
 Fs& Engine::GetFs() { return fs_; }
+
+TextureManager& Engine::GetTextureManager() { return texture_manager_; }
 
 InputManager& Engine::GetInputManager() { return input_manager_; }
 
