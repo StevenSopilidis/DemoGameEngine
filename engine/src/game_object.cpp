@@ -1,5 +1,6 @@
 #include "game_object.h"
 
+#include "animation_component.h"
 #include "component.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -250,12 +251,65 @@ void ParseGLTFNode(cgltf_node* node, engine::GameObject* parent,
     }
 }
 
+auto ReadScalar = [](cgltf_accessor* acc, cgltf_size index)
+{
+    float res{};
+    cgltf_accessor_read_float(acc, index, &res, 1);
+    return res;
+};
+
+auto ReadVec3 = [](cgltf_accessor* acc, cgltf_size index)
+{
+    glm::vec3 res;
+    cgltf_accessor_read_float(acc, index, glm::value_ptr(res), 3);
+    return res;
+};
+
+auto ReadQuat = [](cgltf_accessor* acc, cgltf_size index)
+{
+    std::array<float, 4> res = {0.0f, 0.0f, 0.0f, 1.0f};
+    cgltf_accessor_read_float(acc, index, res.data(), 4);
+    return glm::quat(res[3], res[0], res[1], res[2]);
+};
+
+auto ReadTimes = [](cgltf_accessor* acc, std::vector<float>& outTimes)
+{
+    outTimes.resize(acc->count);
+    for (cgltf_size i{0}; i < acc->count; i++)
+    {
+        outTimes[i] = ReadScalar(acc, i);
+    }
+};
+
+auto ReadOutputVec3 = [](cgltf_accessor* acc, std::vector<glm::vec3>& outValues)
+{
+    outValues.resize(acc->count);
+    for (cgltf_size i{0}; i < acc->count; i++)
+    {
+        outValues[i] = ReadVec3(acc, i);
+    }
+};
+
+auto ReadOutputQuat = [](cgltf_accessor* acc, std::vector<glm::quat>& outValues)
+{
+    outValues.resize(acc->count);
+    for (cgltf_size i{0}; i < acc->count; i++)
+    {
+        outValues[i] = ReadQuat(acc, i);
+    }
+};
+
 } // namespace
 
 namespace engine
 {
 void GameObject::Update(float deltaTime)
 {
+    if (!is_active_)
+    {
+        return;
+    }
+
     for (auto& component : components_)
     {
         component->Update(deltaTime);
@@ -294,6 +348,24 @@ void GameObject::AddComponent(Component* component)
 [[nodiscard]] const glm::vec3& GameObject::Position() const { return position_; }
 [[nodiscard]] const glm::quat& GameObject::Rotation() const { return rotation_; }
 [[nodiscard]] const glm::vec3& GameObject::Scale() const { return scale_; }
+
+GameObject* GameObject::FindChildByName(const std::string& name)
+{
+    if (name_ == name)
+    {
+        return this;
+    }
+
+    for (auto& child : children_)
+    {
+        if (auto* result = child->FindChildByName(name))
+        {
+            return result;
+        }
+    }
+
+    return nullptr;
+}
 
 void GameObject::SetPosition(glm::vec3 position) { position_ = position; }
 void GameObject::SetRotation(glm::quat rotation) { rotation_ = rotation; }
@@ -369,10 +441,115 @@ GameObject* GameObject::LoadGLTF(const std::filesystem::path& path)
         ParseGLTFNode(node, resultObj, relativeFolderPath);
     }
 
+    std::vector<std::shared_ptr<AnimationClip>> clips;
+    for (cgltf_size ai{}; ai < data->animations_count; ai++)
+    {
+        auto& anim = data->animations[ai];
+
+        auto clip      = std::make_shared<AnimationClip>();
+        clip->name     = anim.name ? anim.name : "noname";
+        clip->duration = 0.0f;
+
+        std::unordered_map<cgltf_node*, size_t> trackIndexOf;
+
+        auto GetOrCreateTrack = [&](cgltf_node* node) -> TransformTrack&
+        {
+            auto it = trackIndexOf.find(node);
+            if (it != trackIndexOf.end())
+            {
+                return clip->tracks[it->second];
+            }
+
+            TransformTrack track;
+            track.target_name = node->name;
+            clip->tracks.push_back(track);
+            size_t idx         = clip->tracks.size() - 1;
+            trackIndexOf[node] = idx;
+            return clip->tracks[idx];
+        };
+
+        for (cgltf_size ci{}; ci < anim.channels_count; ci++)
+        {
+            auto& channel = anim.channels[ci];
+            auto  sampler = channel.sampler;
+
+            if (!channel.target_node || !sampler || !sampler->input || !sampler->output)
+            {
+                continue;
+            }
+
+            std::vector<float> times;
+            ReadTimes(sampler->input, times);
+
+            auto& track = GetOrCreateTrack(channel.target_node);
+
+            switch (channel.target_path)
+            {
+            case cgltf_animation_path_type_translation:
+            {
+                std::vector<glm::vec3> values;
+                ReadOutputVec3(sampler->output, values);
+                track.positions.resize(times.size());
+                for (size_t i{}; i < times.size(); i++)
+                {
+                    track.positions[i].time  = times[i];
+                    track.positions[i].value = values[i];
+                }
+            }
+            break;
+            case cgltf_animation_path_type_rotation:
+            {
+                std::vector<glm::quat> values;
+                ReadOutputQuat(sampler->output, values);
+                track.rotations.resize(times.size());
+                for (size_t i{}; i < times.size(); i++)
+                {
+                    track.rotations[i].time  = times[i];
+                    track.rotations[i].value = values[i];
+                }
+            }
+            break;
+            case cgltf_animation_path_type_scale:
+            {
+                std::vector<glm::vec3> values;
+                ReadOutputVec3(sampler->output, values);
+                track.scales.resize(times.size());
+                for (size_t i{}; i < times.size(); i++)
+                {
+                    track.scales[i].time  = times[i];
+                    track.scales[i].value = values[i];
+                }
+            }
+            break;
+            default:
+                break;
+            }
+
+            clip->duration = std::max(clip->duration, times.back());
+        }
+
+        clips.push_back(std::move(clip));
+    }
+
+    if (!clips.empty())
+    {
+        auto* animComponent = new AnimationComponent();
+        resultObj->AddComponent(animComponent);
+
+        for (auto& clip : clips)
+        {
+            animComponent->RegisterClip(clip->name, clip);
+        }
+    }
+
     cgltf_free(data);
 
     return resultObj;
 }
+
+void GameObject::SetActive(bool active) { is_active_ = active; }
+
+bool GameObject::IsActive() const { return is_active_; }
 
 bool GameObject::SetParent(GameObject* parent)
 {

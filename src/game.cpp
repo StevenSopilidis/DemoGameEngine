@@ -36,6 +36,24 @@ bool Game::Init()
     gunObject->SetPosition(glm::vec3(0.75f, -0.5f, -0.75f));
     gunObject->SetScale(glm::vec3(-1.0f, 1.0f, 1.0f));
 
+    if (auto anim = gunObject->GetComponent<engine::AnimationComponent>())
+    {
+        if (auto bullet = gunObject->FindChildByName("bullet_33"))
+        {
+            bullet->SetActive(true);
+        }
+        if (auto file = gunObject->FindChildByName("BOOM_35"))
+        {
+            file->SetActive(true);
+        }
+
+        anim->Play("shoot");
+    }
+    else
+    {
+        std::cout << "Could not get animation\n";
+    }
+
     auto* light     = scene_->CreateObject("Light");
     auto* lightComp = new engine::LightComponent();
     lightComp->SetColor(glm::vec3(1.0f));

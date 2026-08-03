@@ -30,6 +30,8 @@ class GameObject
     Scene*                           GetScene();
     [[nodiscard]] bool               IsAlive() const;
     void                             MarkForDestroy();
+    void                             SetActive(bool active);
+    [[nodiscard]] bool               IsActive() const;
 
     void AddComponent(Component* component);
     template <typename T, typename = typename std::enable_if<std::is_base_of_v<Component, T>>>
@@ -52,6 +54,8 @@ class GameObject
     [[nodiscard]] const glm::quat& Rotation() const;
     [[nodiscard]] const glm::vec3& Scale() const;
 
+    GameObject* FindChildByName(const std::string& name);
+
     void SetPosition(glm::vec3 position);
     void SetRotation(glm::quat rotation);
     void SetScale(glm::vec3 scale);
@@ -73,6 +77,7 @@ class GameObject
     std::vector<std::unique_ptr<GameObject>> children_;
     std::vector<std::unique_ptr<Component>>  components_;
     bool                                     is_alive_{true};
+    bool                                     is_active_{true};
 
     glm::vec3 position_ = glm::vec3(0.0f);
     glm::quat rotation_ = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);

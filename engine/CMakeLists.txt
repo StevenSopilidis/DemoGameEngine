@@ -26,6 +26,7 @@ set(PROJECT_SOURCE_FILES
     src/component.cpp
     src/mesh_component.cpp
     src/camera_component.cpp
+    src/animation_component.cpp
     src/player_controller_component.cpp
     src/fs.cpp
     src/texture.cpp
