@@ -1,3 +1,8 @@
-rm -rf ./build
-cmake -S . -B build
-cmake --build build -j
+#!/bin/bash
+
+set -e
+
+cmake -S . -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release
+
+cmake --build build --parallel 4

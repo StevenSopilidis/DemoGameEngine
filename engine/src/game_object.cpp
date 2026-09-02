@@ -341,8 +341,14 @@ void GameObject::MarkForDestroy() { is_alive_ = false; }
 
 void GameObject::AddComponent(Component* component)
 {
+    if (!component)
+    {
+        return;
+    }
+
     components_.emplace_back(component);
     component->owner_ = this;
+    component->Init();
 }
 
 [[nodiscard]] const glm::vec3& GameObject::Position() const { return position_; }

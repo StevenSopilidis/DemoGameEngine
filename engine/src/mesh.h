@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GL/glew.h"
+#include "glm/vec3.hpp"
 #include "vertex_layout.h"
 
 #include <filesystem>
@@ -20,6 +21,8 @@ class Mesh
 
     void Bind();
     void Draw();
+
+    static std::shared_ptr<Mesh> CreateBox(const glm::vec3& extents = glm::vec3(1));
 
   private:
     VertexLayout vertex_layout_;

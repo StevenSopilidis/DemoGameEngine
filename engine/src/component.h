@@ -10,7 +10,8 @@ class Component
   public:
     virtual ~Component()                                 = default;
     virtual void                 Update(float deltaTime) = 0;
-    [[nodiscard]] virtual size_t GetTypeId() const       = 0;
+    virtual void                 Init();
+    [[nodiscard]] virtual size_t GetTypeId() const = 0;
 
     [[nodiscard]] GameObject* Owner() const;
 

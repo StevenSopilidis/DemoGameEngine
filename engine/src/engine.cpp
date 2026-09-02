@@ -106,6 +106,7 @@ bool Engine::Init(int window_width, int window_height)
     }
 
     graphics_api_.Init();
+    physics_manager_.Init();
     return application_->Init();
 }
 
@@ -124,6 +125,8 @@ void Engine::Run()
         auto now         = std::chrono::high_resolution_clock::now();
         auto deltaTime   = std::chrono::duration<float>(now - last_time_point_).count();
         last_time_point_ = now;
+
+        physics_manager_.Update(deltaTime);
 
         application_->Update(deltaTime);
 
@@ -187,5 +190,7 @@ GraphicsApi& Engine::GetGraphicsApi() { return graphics_api_; };
 Scene* Engine::CurrentScene() { return current_scene_.get(); }
 
 void Engine::SetCurrentScene(Scene* scene) { current_scene_.reset(scene); }
+
+PhysicsManager& Engine::GetPhysicsManager() { return physics_manager_; };
 
 } // namespace engine

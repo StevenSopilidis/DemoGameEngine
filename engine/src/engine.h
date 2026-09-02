@@ -3,6 +3,7 @@
 #include "fs.h"
 #include "graphics_api.h"
 #include "input.h"
+#include "physics_manager.h"
 #include "render_queue.h"
 #include "scene.h"
 #include "texture.h"
@@ -48,6 +49,8 @@ class Engine
     Scene* CurrentScene();
     void   SetCurrentScene(Scene* scene);
 
+    PhysicsManager& GetPhysicsManager();
+
   private:
     using GLFWwindowPtr = std::unique_ptr<GLFWwindow, GLFWwindowDeleter>;
 
@@ -60,6 +63,7 @@ class Engine
     InputManager                                   input_manager_;
     GraphicsApi                                    graphics_api_;
     TextureManager                                 texture_manager_;
+    PhysicsManager                                 physics_manager_;
     Fs                                             fs_;
     RenderQueue                                    render_queue_;
 };

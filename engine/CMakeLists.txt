@@ -31,6 +31,10 @@ set(PROJECT_SOURCE_FILES
     src/fs.cpp
     src/texture.cpp
     src/light_component.cpp
+    src/physics_manager.cpp
+    src/collider.cpp
+    src/rigid_body.cpp
+    src/physics_component.cpp
 )
 
 include_directories(src)
@@ -58,10 +62,29 @@ set_property(TARGET glew PROPERTY FOLDER GLEW)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR})
 
+# Bullet lib
+set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "" FORCE)
+set(BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(
+    third-party/bullet3-3.25
+    ${CMAKE_CURRENT_BINARY_DIR}/bullet_build
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/third-party/bullet3-3.25/src
+)
+
 target_link_libraries(${PROJECT_NAME}
     glfw
     glew_s
     glm
+    BulletDynamics
+    BulletCollision
+    LinearMath
 )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
