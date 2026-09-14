@@ -29,6 +29,9 @@ class InputManager
     void                           SetMousePositionCurr(const glm::vec2& pos);
     [[nodiscard]] const glm::vec2& MousePositionCurr() const;
 
+    void               SetMousePositionChanged(bool changed);
+    [[nodiscard]] bool IsMousePositionChanged() const;
+
   private:
     friend class Engine;
 
@@ -38,5 +41,6 @@ class InputManager
     std::array<bool, 16>  mouse_keys_          = {false};
     glm::vec2             mouse_position_old_  = glm::vec2(0.0f);
     glm::vec2             mouse_position_curr_ = glm::vec2(0.0f);
+    bool                  mouse_position_changed_{};
 }; // namespace engine
 } // namespace engine

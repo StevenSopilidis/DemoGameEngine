@@ -4,6 +4,7 @@
 #include "collider.h"
 #include "light_component.h"
 #include "physics_component.h"
+#include "player.h"
 #include "rigid_body.h"
 #include "test_object.h"
 
@@ -31,40 +32,15 @@ bool Game::Init()
     scene_ = new engine::Scene();
     engine::Engine::GetInstance().SetCurrentScene(scene_);
 
-    auto* camera = scene_->CreateObject("Camera");
-    camera->AddComponent(new engine::CameraComponent());
-    camera->SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
-    camera->AddComponent(new engine::PlayerControllerComponent());
+    auto player = scene_->CreateObject<Player>("Player");
+    player->Init();
 
-    scene_->SetMainCamera(camera);
+    scene_->SetMainCamera(player);
 
     scene_->CreateObject<TestObject>("TestObject");
 
     auto* suzanneObject = engine::GameObject::LoadGLTF("models/suzanne/Suzanne.gltf");
     suzanneObject->SetPosition(glm::vec3(0.0f, 0.0f, -5.0f));
-
-    auto* gunObject = engine::GameObject::LoadGLTF("models/sten_gunmachine_carbine/scene.gltf");
-    gunObject->SetParent(camera);
-    gunObject->SetPosition(glm::vec3(0.75f, -0.5f, -0.75f));
-    gunObject->SetScale(glm::vec3(-1.0f, 1.0f, 1.0f));
-
-    if (auto anim = gunObject->GetComponent<engine::AnimationComponent>())
-    {
-        if (auto bullet = gunObject->FindChildByName("bullet_33"))
-        {
-            bullet->SetActive(true);
-        }
-        if (auto file = gunObject->FindChildByName("BOOM_35"))
-        {
-            file->SetActive(true);
-        }
-
-        anim->Play("shoot");
-    }
-    else
-    {
-        std::cout << "Could not get animation\n";
-    }
 
     auto* light     = scene_->CreateObject("Light");
     auto* lightComp = new engine::LightComponent();
@@ -92,8 +68,6 @@ bool Game::Init()
     auto boxBody =
         std::make_shared<engine::RigidBody>(engine::BodyType::Dynamic, boxCollider, 5.0f, 0.5f);
     boxObj->AddComponent(new engine::PhysicsComponent(boxBody));
-
-    camera->SetPosition(glm::vec3(0.0f, 1.0f, 7.0f));
 
     return true;
 }

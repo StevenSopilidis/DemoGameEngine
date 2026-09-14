@@ -35,6 +35,8 @@ set(PROJECT_SOURCE_FILES
     src/collider.cpp
     src/rigid_body.cpp
     src/physics_component.cpp
+    src/kinematic_character_controler.cpp
+    src/player.cpp
 )
 
 include_directories(src)

@@ -70,7 +70,6 @@ class GameObject
   protected:
     GameObject() = default;
 
-  private:
     std::string                              name_;
     Scene*                                   scene_{};
     GameObject*                              parent_{};

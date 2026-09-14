@@ -219,4 +219,6 @@ void AnimationComponent::BuildBindings()
     }
 }
 
+bool AnimationComponent::IsPlaying() const { return is_playing_; }
+
 } // namespace engine

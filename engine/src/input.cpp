@@ -46,16 +46,12 @@ bool InputManager::IsMouseButtonPressed(int button)
 
 void InputManager::SetMousePositionOld(const glm::vec2& pos) { mouse_position_old_ = pos; }
 
-[[nodiscard]] const glm::vec2& InputManager::MousePositionOld() const
-{
-    return mouse_position_old_;
-}
+const glm::vec2& InputManager::MousePositionOld() const { return mouse_position_old_; }
 
 void InputManager::SetMousePositionCurr(const glm::vec2& pos) { mouse_position_curr_ = pos; }
 
-[[nodiscard]] const glm::vec2& InputManager::MousePositionCurr() const
-{
-    return mouse_position_curr_;
-}
+const glm::vec2& InputManager::MousePositionCurr() const { return mouse_position_curr_; }
 
+void InputManager::SetMousePositionChanged(bool changed) { mouse_position_changed_ = changed; }
+[[nodiscard]] bool InputManager::IsMousePositionChanged() const { return mouse_position_changed_; };
 } // namespace engine
