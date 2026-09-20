@@ -9,4 +9,13 @@ size_t Component::next_id_{0};
 void Component::Init() {}
 
 GameObject* Component::Owner() const { return owner_; }
+
+void Component::LoadProperties(const nlohmann::json& json) {}
+
+ComponentFactory& ComponentFactory::GetInstance()
+{
+    static ComponentFactory instance;
+    return instance;
+}
+
 } // namespace engine

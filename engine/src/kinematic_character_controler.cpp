@@ -9,16 +9,17 @@
 namespace engine
 {
 
-KinematicCharacterController::KinematicCharacterController(float radius, float height)
+KinematicCharacterController::KinematicCharacterController(float radius, float height,
+                                                           const glm::vec3& pos)
     : radius_(radius), height_(height)
 {
     auto world   = Engine::GetInstance().GetPhysicsManager().GetWorld();
     auto capsule = new btCapsuleShape(radius_, height_);
 
     ghost_ = std::make_unique<btPairCachingGhostObject>();
-    btTransform start;
+btTransform start;
     start.setIdentity();
-    start.setOrigin(btVector3(0.0f, 2.0f, 0.0f));
+    start.setOrigin(btVector3(pos.x, pos.y, pos.z));
     ghost_->setWorldTransform(start);
     ghost_->setCollisionShape(capsule);
     ghost_->setCollisionFlags(ghost_->getCollisionFlags() | btCollisionObject::CF_CHARACTER_OBJECT);

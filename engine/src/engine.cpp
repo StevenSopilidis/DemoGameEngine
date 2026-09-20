@@ -71,6 +71,9 @@ bool Engine::Init(int window_width, int window_height)
         return false;
     }
 
+    Scene::RegisterTypes();
+    application_->RegisterTypes();
+
 #if defined(__linux__)
     glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 #endif

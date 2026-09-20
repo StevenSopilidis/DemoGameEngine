@@ -1,9 +1,8 @@
 #include "player_controller_component.h"
 
-#include "engine.h"
-
 #include "GLFW/glfw3.h"
 #include "component.h"
+#include "engine.h"
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <iostream>
@@ -92,7 +91,8 @@ void PlayerControllerComponent::Update(float deltaTime)
 
 void PlayerControllerComponent::Init()
 {
-    controller_ = std::make_unique<KinematicCharacterController>(0.4f, 1.2f);
+    controller_ =
+        std::make_unique<KinematicCharacterController>(0.4f, 1.2f, owner_->GetWorldPosition());
 }
 
 } // namespace engine

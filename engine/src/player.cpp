@@ -8,35 +8,19 @@
 
 void Player::Init()
 {
-    AddComponent(new engine::CameraComponent());
-    SetPosition(glm::vec3(0.0f, 0.0f, 2.0f));
-    AddComponent(new engine::PlayerControllerComponent());
-
-    auto* gunObject = engine::GameObject::LoadGLTF("models/sten_gunmachine_carbine/scene.gltf");
-    gunObject->SetParent(this);
-    gunObject->SetPosition(glm::vec3(0.75f, -0.5f, -0.75f));
-    gunObject->SetScale(glm::vec3(-1.0f, 1.0f, 1.0f));
-
-    if (auto* anim = gunObject->GetComponent<engine::AnimationComponent>())
+    if (auto* bullet = FindChildByName("bullet_33"))
     {
-        if (auto* bullet = gunObject->FindChildByName("bullet_33"))
-        {
-            bullet->SetActive(true);
-        }
-        if (auto* file = gunObject->FindChildByName("BOOM_35"))
-        {
-            file->SetActive(true);
-        }
-
-        anim->Play("shoot");
+        bullet->SetActive(true);
     }
-    else
+    if (auto* file = FindChildByName("BOOM_35"))
     {
-        std::cout << "Could not get animation\n";
-        throw std::invalid_argument("Could not get animation");
+        file->SetActive(true);
     }
 
-    animation_component_ = gunObject->GetComponent<engine::AnimationComponent>();
+    if (auto* gun = FindChildByName("Gun"))
+    {
+        animation_component_ = GetComponent<engine::AnimationComponent>();
+    }
 }
 
 void Player::Update(float deltaTime)

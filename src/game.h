@@ -5,6 +5,7 @@
 class Game : public engine::Application
 {
   public:
+    void RegisterTypes() override;
     bool Init() override;
     void Update(float deltaTime) override;
     void Destroy() override;

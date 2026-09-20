@@ -22,6 +22,9 @@ class GameObject
     GameObject(const GameObject&)            = delete;
     GameObject& operator=(const GameObject&) = delete;
 
+    virtual void Init();
+    virtual void LoadProperties(const nlohmann::json& json);
+
     virtual void                     Update(float deltaTime);
     [[nodiscard]] const std::string& Name() const;
     void                             SetName(const std::string& name);
@@ -60,12 +63,17 @@ class GameObject
     void SetRotation(glm::quat rotation);
     void SetScale(glm::vec3 scale);
 
+    void SetWorldPosition(const glm::vec3& pos);
+
+    [[nodiscard]] glm::quat GetWorldRotation() const;
+    void                    SetWorldRotation(const glm::quat& rot);
+
     [[nodiscard]] glm::mat4 GetLocalTransform() const;
     [[nodiscard]] glm::mat4 GetWorldTransform() const;
 
     [[nodiscard]] glm::vec3 GetWorldPosition() const;
 
-    static GameObject* LoadGLTF(const std::filesystem::path& path);
+    static GameObject* LoadGLTF(const std::filesystem::path& path, Scene* gameScene);
 
   protected:
     GameObject() = default;
@@ -84,4 +92,42 @@ class GameObject
 
     friend class Scene;
 };
+
+class ObjectCreatorBase
+{
+  public:
+    virtual ~ObjectCreatorBase()           = default;
+    virtual GameObject* CreateGameObject() = 0;
+};
+
+template <typename T> class ObjectCreator : public ObjectCreatorBase
+{
+  public:
+    GameObject* CreateGameObject() override { return new T(); }
+};
+
+class GameObjectFactory
+{
+  public:
+    static GameObjectFactory& GetInstance();
+
+    template <typename T> void RegisterObject(const std::string& name)
+    {
+        creators_.emplace(name, std::make_unique<ObjectCreator<T>>());
+    }
+
+    GameObject* CreateGameObject(const std::string& typeName);
+
+  private:
+    std::unordered_map<std::string, std::unique_ptr<ObjectCreatorBase>> creators_;
+};
+
+#define GAMEOBJECT(ObjectClass)                                                                    \
+  public:                                                                                          \
+    static void Register()                                                                         \
+    {                                                                                              \
+        engine::GameObjectFactory::GetInstance().RegisterObject<ObjectClass>(                      \
+            std::string(#ObjectClass));                                                            \
+    }
+
 } // namespace engine

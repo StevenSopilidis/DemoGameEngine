@@ -11,6 +11,7 @@ class LightComponent : public Component
     COMPONENT(LightComponent)
   public:
     void Update(float deltaTime) override;
+    void LoadProperties(const nlohmann::json& json) override;
 
     [[nodiscard]] const glm::vec3& Color() const;
     void                           SetColor(const glm::vec3& color);

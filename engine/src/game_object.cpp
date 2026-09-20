@@ -408,11 +408,16 @@ glm::vec3 GameObject::GetWorldPosition() const
     return glm::vec3(hom) / hom.w;
 }
 
-GameObject* GameObject::LoadGLTF(const std::filesystem::path& path)
+GameObject* GameObject::LoadGLTF(const std::filesystem::path& path, Scene* gameScene)
 {
     auto content = Engine::GetInstance().GetFs().LoadAssetFile(path);
 
     if (content.empty())
+    {
+        return nullptr;
+    }
+
+    if (gameScene == nullptr)
     {
         return nullptr;
     }
@@ -438,7 +443,7 @@ GameObject* GameObject::LoadGLTF(const std::filesystem::path& path)
         return nullptr;
     }
 
-    auto* resultObj = Engine::GetInstance().CurrentScene()->CreateObject("Result");
+    auto* resultObj = gameScene->CreateObject("Result");
     auto* scene     = &data->scenes[0];
 
     for (cgltf_size i{}; i < scene->nodes_count; i++)
@@ -568,5 +573,68 @@ bool GameObject::SetParent(GameObject* parent)
 }
 
 Scene* GameObject::GetScene() { return scene_; }
+
+void GameObject::SetWorldPosition(const glm::vec3& pos)
+{
+    if (parent_)
+    {
+        auto parentWorld    = parent_->GetWorldTransform();
+        auto invParentWorld = glm::inverse(parentWorld);
+        auto localPos       = invParentWorld * glm::vec4(pos, 1.0f);
+        SetPosition(glm::vec3(localPos) / localPos.w);
+    }
+    else
+    {
+        SetPosition(pos);
+    }
+}
+
+glm::quat GameObject::GetWorldRotation() const
+{
+    if (parent_)
+    {
+        return parent_->GetWorldRotation() * rotation_;
+    }
+    else
+    {
+        return rotation_;
+    }
+}
+
+void GameObject::SetWorldRotation(const glm::quat& rot)
+{
+    if (parent_)
+    {
+        auto parentWorldRot    = parent_->GetWorldRotation();
+        auto invParentWorldRot = glm::inverse(parentWorldRot);
+        auto newLocalRot       = invParentWorldRot * rot;
+        SetRotation(newLocalRot);
+    }
+    else
+    {
+        SetRotation(rot);
+    }
+}
+
+void GameObject::Init() {}
+
+void GameObject::LoadProperties(const nlohmann::json& json) {}
+
+GameObjectFactory& GameObjectFactory::GetInstance()
+{
+    static GameObjectFactory instance;
+    return instance;
+}
+
+GameObject* GameObjectFactory::CreateGameObject(const std::string& typeName)
+{
+    auto it = creators_.find(typeName);
+    if (it == creators_.end())
+    {
+        return nullptr;
+    }
+
+    return it->second->CreateGameObject();
+}
 
 } // namespace engine

@@ -10,6 +10,8 @@ class Application
     virtual void Update(float deltaTime) = 0;
     virtual void Destroy()               = 0;
 
+    virtual void RegisterTypes();
+
     void               SetNeedsToClose(bool value) noexcept;
     [[nodiscard]] bool NeedsToClose() const noexcept;
 
