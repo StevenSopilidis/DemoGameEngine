@@ -53,9 +53,9 @@ include_directories(third-party/glew/include)
 
 include_directories(third-party/stb_image)
 
-include_directories(third-party/json)
-
 include_directories(third-party/cgltf)
+
+include_directories(third-party/json)
 
 add_subdirectory(third-party/glm)
 

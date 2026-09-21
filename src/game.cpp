@@ -15,15 +15,10 @@ void Game::RegisterTypes() { Player::Register(); }
 bool Game::Init()
 {
     scene_ = engine::Scene::Load("scenes/scene.sc");
-    engine::Engine::GetInstance().SetCurrentScene(scene_);
+    engine::Engine::GetInstance().SetCurrentScene(scene_.get());
     return true;
 }
 
-void Game::Update(float deltaTime)
-{
-    auto& inputManager = engine::Engine::GetInstance().GetInputManager();
-
-    scene_->Update(deltaTime);
-}
+void Game::Update(float deltaTime) { scene_->Update(deltaTime); }
 
 void Game::Destroy() {}

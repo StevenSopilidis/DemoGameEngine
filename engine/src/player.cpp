@@ -10,16 +10,17 @@ void Player::Init()
 {
     if (auto* bullet = FindChildByName("bullet_33"))
     {
-        bullet->SetActive(true);
+        bullet->SetActive(false);
     }
-    if (auto* file = FindChildByName("BOOM_35"))
+
+    if (auto* fire = FindChildByName("BOOM_35"))
     {
-        file->SetActive(true);
+        fire->SetActive(false);
     }
 
     if (auto* gun = FindChildByName("Gun"))
     {
-        animation_component_ = GetComponent<engine::AnimationComponent>();
+        animation_component_ = gun->GetComponent<engine::AnimationComponent>();
     }
 }
 

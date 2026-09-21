@@ -13,10 +13,15 @@ set(PROJECT_SOURCE_FILES
     src/test_object.cpp
 )
 
-include_directories(engine/third-party/glew/include)
 
+include_directories(
+    src
+    engine/src
+    engine/third-party/glew/include
+    engine/third-party/stb_image
+    engine/third-party/json
+)
 
-include_directories(src)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_FILES})
 
 add_subdirectory(engine "${CMAKE_CURRENT_BINARY_DIR}/engine_build")

@@ -11,5 +11,5 @@ class Game : public engine::Application
     void Destroy() override;
 
   private:
-    engine::Scene* scene_{nullptr};
+    std::shared_ptr<engine::Scene> scene_{nullptr};
 };
