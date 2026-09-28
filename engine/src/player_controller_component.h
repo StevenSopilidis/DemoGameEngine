@@ -13,8 +13,9 @@ class PlayerControllerComponent : public Component
     COMPONENT(PlayerControllerComponent);
 
   public:
-    void Init() override;
-    void Update(float deltaTime) override;
+    void               Init() override;
+    void               Update(float deltaTime) override;
+    [[nodiscard]] bool OnGround() const;
 
   private:
     std::unique_ptr<KinematicCharacterController> controller_;

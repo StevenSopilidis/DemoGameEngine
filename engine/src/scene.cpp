@@ -1,5 +1,7 @@
 #include "scene.h"
 
+#include "audio_component.h"
+#include "audio_listener_component.h"
 #include "engine.h"
 #include "light_component.h"
 
@@ -23,6 +25,8 @@ void Scene::RegisterTypes()
     MeshComponent::Register();
     PhysicsComponent::Register();
     PlayerControllerComponent::Register();
+    AudioComponent::Register();
+    AudioListenerComponent::Register();
 }
 
 void Scene::Update(float deltaTime)

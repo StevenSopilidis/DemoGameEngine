@@ -1,5 +1,6 @@
 #pragma once
 
+#include "audio_manager.h"
 #include "fs.h"
 #include "graphics_api.h"
 #include "input.h"
@@ -43,6 +44,7 @@ class Engine
     InputManager& GetInputManager();
     GraphicsApi&  GetGraphicsApi();
     Fs&           GetFs();
+    AudioManager& GetAudioManager();
 
     TextureManager& GetTextureManager();
 
@@ -64,6 +66,7 @@ class Engine
     GraphicsApi                                    graphics_api_;
     TextureManager                                 texture_manager_;
     PhysicsManager                                 physics_manager_;
+    AudioManager                                   audio_manager_;
     Fs                                             fs_;
     RenderQueue                                    render_queue_;
 };

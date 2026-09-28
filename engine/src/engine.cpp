@@ -113,6 +113,8 @@ bool Engine::Init(int window_width, int window_height)
 
     graphics_api_.Init();
     physics_manager_.Init();
+    audio_manager_.Init();
+
     return application_->Init();
 }
 
@@ -180,6 +182,8 @@ void Engine::Destroy()
         glfwTerminate();
     }
 }
+
+AudioManager& Engine::GetAudioManager() { return audio_manager_; }
 
 void Engine::SetApplication(Application* app) noexcept { application_.reset(app); }
 

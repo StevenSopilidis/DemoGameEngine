@@ -96,4 +96,9 @@ void PlayerControllerComponent::Init()
         std::make_unique<KinematicCharacterController>(0.4f, 1.2f, owner_->GetWorldPosition());
 }
 
+bool PlayerControllerComponent::OnGround() const
+{
+    return controller_ != nullptr ? controller_->OnGround() : false;
+}
+
 } // namespace engine
