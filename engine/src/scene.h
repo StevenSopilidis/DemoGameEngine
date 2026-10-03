@@ -29,8 +29,15 @@ class Scene
         auto obj = new T();
         obj->SetName(name);
         obj->scene_ = this;
-        SetParent(obj, parent);
 
+        if (is_updating_)
+        {
+            objects_to_add_.emplace_back(static_cast<GameObject*>(obj), parent);
+        }
+        else
+        {
+            SetParent(obj, parent);
+        }
         return obj;
     }
 
@@ -48,7 +55,9 @@ class Scene
 
     void LoadObject(const nlohmann::json& jsonObject, GameObject* parent);
 
-    std::vector<std::unique_ptr<GameObject>> objects_;
-    GameObject*                              main_camera_{nullptr};
+    std::vector<std::pair<GameObject*, GameObject*>> objects_to_add_; // pair: <object, parent>
+    std::vector<std::unique_ptr<GameObject>>         objects_;
+    GameObject*                                      main_camera_{nullptr};
+    bool                                             is_updating_{};
 };
 } // namespace engine

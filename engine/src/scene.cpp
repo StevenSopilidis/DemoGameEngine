@@ -31,15 +31,22 @@ void Scene::RegisterTypes()
 
 void Scene::Update(float deltaTime)
 {
-    auto result = std::ranges::remove_if(objects_, [](const std::unique_ptr<GameObject>& obj)
-                                         { return !obj->IsAlive(); });
+    std::erase_if(objects_, [](auto& obj) { return !obj->IsAlive(); });
 
-    objects_.erase(result.begin(), result.end());
+    for (auto& obj : objects_to_add_)
+    {
+        SetParent(obj.first, obj.second);
+    }
+    objects_to_add_.clear();
+
+    is_updating_ = true;
 
     for (auto& obj : objects_)
     {
         obj->Update(deltaTime);
     }
+
+    is_updating_ = false;
 }
 
 void Scene::Clear() { objects_.clear(); }
@@ -49,8 +56,14 @@ GameObject* Scene::CreateObject(const std::string& name, GameObject* parent)
     auto* obj = new GameObject();
     obj->SetName(name);
     obj->scene_ = this;
-    SetParent(obj, parent);
-
+    if (is_updating_)
+    {
+        objects_to_add_.emplace_back(obj, parent);
+    }
+    else
+    {
+        SetParent(obj, parent);
+    }
     return obj;
 }
 
@@ -62,7 +75,14 @@ GameObject* Scene::CreateObject(const std::string& type, const std::string& name
     {
         obj->SetName(name);
         obj->scene_ = this;
-        SetParent(obj, parent);
+        if (is_updating_)
+        {
+            objects_to_add_.emplace_back(obj, parent);
+        }
+        else
+        {
+            SetParent(obj, parent);
+        }
     }
 
     return obj;

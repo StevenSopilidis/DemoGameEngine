@@ -74,8 +74,23 @@ void RigidBody::SetPosition(const glm::vec3& pos)
     body_->setWorldTransform(transform);
 }
 
+void RigidBody::ApplyImpulse(const glm::vec3& impulse)
+{
+    if (!body_)
+    {
+        return;
+    }
+
+    body_->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+}
+
 glm::vec3 RigidBody::Position() const
 {
+    if (!body_)
+    {
+        return {0.0f, 0.0f, 0.0f};
+    }
+
     const auto& pos = body_->getWorldTransform().getOrigin();
     return {pos.x(), pos.y(), pos.z()};
 }
@@ -100,6 +115,11 @@ void RigidBody::SetRotation(const glm::quat& rot)
 
 glm::quat RigidBody::Rotation() const
 {
+    if (!body_)
+    {
+        return {1.0f, 0.0f, 0.0f, 0.0f};
+    }
+
     const auto& rot = body_->getWorldTransform().getRotation();
     return {rot.x(), rot.y(), rot.z(), rot.w()};
 }

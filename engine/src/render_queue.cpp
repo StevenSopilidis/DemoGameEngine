@@ -33,6 +33,7 @@ void RenderQueue::Draw(GraphicsApi& api, const CameraData& cameraData,
 
         api.BindMesh(command.mesh);
         api.DrawMesh(command.mesh);
+        api.UnbindMesh(command.mesh);
     }
 
     commands_.clear();

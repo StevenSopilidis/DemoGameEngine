@@ -1,7 +1,9 @@
 #include "player.h"
 
 #include "GLFW/glfw3.h"
+#include "bullet.h"
 #include "camera_component.h"
+#include "physics_component.h"
 #include "player_controller_component.h"
 
 #include <iostream>
@@ -49,6 +51,27 @@ void Player::Update(float deltaTime)
 
             audio_component_->Play("shoot");
         }
+
+        auto* bullet         = scene_->CreateObject<Bullet>("bullet");
+        auto  bulletMaterial = engine::Material::Load("materials/suzanne.mat.json");
+        auto  bulletMesh     = engine::Mesh::CreateSphere(0.2f, 32, 32);
+        bullet->AddComponent(new engine::MeshComponent(bulletMaterial, bulletMesh));
+
+        auto pos = glm::vec3(0.0f);
+        if (auto* child = FindChildByName("BOOM_35"))
+        {
+            pos = child->GetWorldPosition();
+        }
+        bullet->SetPosition(pos + rotation_ * glm::vec3(-0.2f, 0.2f, -1.75f));
+
+        auto collider = std::make_shared<engine::SphereCollider>(0.2f);
+        auto rigidBody =
+            std::make_shared<engine::RigidBody>(engine::BodyType::Dynamic, collider, 10, 0.1f);
+
+        bullet->AddComponent(new engine::PhysicsComponent(rigidBody));
+
+        auto frontVector = rotation_ * glm::vec3(0.0f, 0.0f, -1.0f);
+        rigidBody->ApplyImpulse(frontVector * 500.0f);
     }
 
     if (input.IsKeyPressed(GLFW_KEY_SPACE))

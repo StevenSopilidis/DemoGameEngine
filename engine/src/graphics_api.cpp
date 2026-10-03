@@ -89,6 +89,14 @@ GLuint GraphicsApi::CreateIndexBuffer(const std::vector<uint32_t>& indices)
     return ebo;
 }
 
+void GraphicsApi::UnbindMesh(Mesh* mesh)
+{
+    if (mesh != nullptr)
+    {
+        mesh->Unbind();
+    }
+}
+
 void GraphicsApi::BindMesh(Mesh* mesh)
 {
     if (mesh != nullptr)

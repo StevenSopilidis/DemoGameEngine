@@ -40,6 +40,8 @@ void PhysicsComponent::Update(float deltaTime)
 
 void PhysicsComponent::SetRigidBody(const std::shared_ptr<RigidBody>& body) { rigidBody_ = body; }
 
+const std::shared_ptr<RigidBody>& PhysicsComponent::GetRigitBody() { return rigidBody_; }
+
 void PhysicsComponent::LoadProperties(const nlohmann::json& json)
 {
     std::shared_ptr<Collider> collider{};

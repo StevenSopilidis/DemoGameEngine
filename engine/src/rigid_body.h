@@ -36,6 +36,8 @@ class RigidBody
     void                    SetRotation(const glm::quat& pos);
     [[nodiscard]] glm::quat Rotation() const;
 
+    void ApplyImpulse(const glm::vec3& impulse);
+
   private:
     std::unique_ptr<btRigidBody> body_;
     BodyType                     type_{BodyType::Static};

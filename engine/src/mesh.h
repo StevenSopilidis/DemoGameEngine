@@ -19,10 +19,12 @@ class Mesh
     Mesh(const Mesh&)            = default;
     Mesh& operator=(const Mesh&) = default;
 
-    void Bind();
+    void Bind() const;
+    void Unbind() const;
     void Draw();
 
     static std::shared_ptr<Mesh> CreateBox(const glm::vec3& extents = glm::vec3(1));
+    static std::shared_ptr<Mesh> CreateSphere(float radius, int sectors, int stacks);
 
   private:
     VertexLayout vertex_layout_;

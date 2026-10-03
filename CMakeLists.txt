@@ -10,6 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(PROJECT_SOURCE_FILES
     src/game.cpp
     src/main.cpp
+    src/bullet.cpp
     src/test_object.cpp
 )
 
