@@ -28,7 +28,7 @@ void RenderQueue::Draw(GraphicsApi& api, const CameraData& cameraData,
         {
             auto& light = lights.at(0);
             shaderProgram->SetUniform("uLight.color", light.color);
-            shaderProgram->SetUniform("uLight.position", light.pos);
+            shaderProgram->SetUniform("uLight.direction", glm::normalize(-light.pos));
         }
 
         api.BindMesh(command.mesh);

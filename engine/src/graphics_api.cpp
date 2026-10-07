@@ -4,6 +4,8 @@
 #include "mesh.h"
 #include "shader_program.h"
 
+#include <iostream>
+
 namespace engine
 {
 
@@ -21,6 +23,7 @@ std::shared_ptr<ShaderProgram> GraphicsApi::CreateShaderProgram(const std::strin
     {
         std::array<char, 512> infoLog;
         glGetShaderInfoLog(vertexShader, infoLog.size(), nullptr, infoLog.data());
+        std::cerr << "Could not create vertex shader program: " << infoLog.data();
         return nullptr;
     }
 
@@ -34,6 +37,7 @@ std::shared_ptr<ShaderProgram> GraphicsApi::CreateShaderProgram(const std::strin
     {
         std::array<char, 512> infoLog;
         glGetShaderInfoLog(fragmentShader, infoLog.size(), nullptr, infoLog.data());
+        std::cerr << "Could not create fragment shader program: " << infoLog.data();
         return nullptr;
     }
 
@@ -47,6 +51,7 @@ std::shared_ptr<ShaderProgram> GraphicsApi::CreateShaderProgram(const std::strin
     {
         std::array<char, 512> infoLog;
         glGetProgramInfoLog(shaderProgramId, infoLog.size(), nullptr, infoLog.data());
+        std::cerr << "Could not get shader program id program: " << infoLog.data();
         return nullptr;
     }
 
@@ -151,7 +156,7 @@ std::shared_ptr<ShaderProgram>& GraphicsApi::GetDefaultSharedProgram()
             struct Light
             {
                 vec3 color;
-                vec3 position;
+                vec3 direction;
             };
 
             uniform Light uLight;
@@ -170,7 +175,7 @@ std::shared_ptr<ShaderProgram>& GraphicsApi::GetDefaultSharedProgram()
                 vec3 norm = normalize(vNormal);
                 
                 // diffuse
-                vec3 lightDir = normalize(uLight.position - vFragPos);
+                vec3 lightDir = normalize(-uLight.direction);
                 float diff = max(dot(norm, lightDir), 0.0);
                 vec3 diffuse = diff * uLight.color;
 
@@ -181,7 +186,11 @@ std::shared_ptr<ShaderProgram>& GraphicsApi::GetDefaultSharedProgram()
                 float specularStrength = 0.5;
                 vec3 specular = specularStrength * spec * uLight.color;
                 
-                vec3 result = diffuse + specular;
+                // ambient
+                const float ambientStrength = 0.4;
+                vec3 ambient = ambientStrength * uLight.color;
+    
+                vec3 result = diffuse + specular + ambient;
 
                 vec4 texColor = texture(baseColorTexture, vUV);
 

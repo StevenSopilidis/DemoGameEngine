@@ -23,6 +23,11 @@ void Material::SetParam(const std::string& name, float v0, float v1)
     float2_params_[name] = {v0, v1};
 }
 
+void Material::SetParam(const std::string& name, const glm::vec3& value)
+{
+    float3_params_[name] = value;
+}
+
 void Material::Bind()
 {
     if (!shader_program_)
@@ -40,6 +45,11 @@ void Material::Bind()
     for (const auto& param : float2_params_)
     {
         shader_program_->SetUniform(param.first, param.second.first, param.second.second);
+    }
+
+    for (const auto& param : float3_params_)
+    {
+        shader_program_->SetUniform(param.first, param.second);
     }
 
     for (const auto& param : textures_)
@@ -80,6 +90,8 @@ std::shared_ptr<Material> Material::Load(const std::filesystem::path& path)
 
         if (!shaderProgram)
         {
+            std::cout << "Could not create shader program \n"
+                      << vertexPath << " " << fragmentxPath << "\n";
             return nullptr;
         }
 
@@ -110,6 +122,19 @@ std::shared_ptr<Material> Material::Load(const std::filesystem::path& path)
                 float       value0 = p.value("value0", 0.0f);
                 float       value1 = p.value("value1", 0.0f);
                 result->SetParam(name, value0, value1);
+            }
+        }
+
+        // float3
+        if (paramsObj.contains("float3"))
+        {
+            for (auto& p : paramsObj["float3"])
+            {
+                std::string name   = p.value("name", "");
+                float       value0 = p.value("value0", 0.0f);
+                float       value1 = p.value("value1", 0.0f);
+                float       value2 = p.value("value2", 0.0f);
+                result->SetParam(name, glm::vec3(value0, value1, value2));
             }
         }
 

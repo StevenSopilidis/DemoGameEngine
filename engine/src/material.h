@@ -1,5 +1,7 @@
 #pragma once
 
+#include "glm/vec3.hpp"
+
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
@@ -14,6 +16,7 @@ class Material
   public:
     void SetShaderProgram(std::shared_ptr<ShaderProgram>& shaderProgram);
     void SetParam(const std::string& name, float value);
+    void SetParam(const std::string& name, const glm::vec3& value);
     void SetParam(const std::string& name, float v0, float v1);
     void SetParam(const std::string& name, const std::shared_ptr<Texture>& texture);
     void Bind();
@@ -27,5 +30,6 @@ class Material
     std::unordered_map<std::string, std::shared_ptr<Texture>> textures_;
     std::unordered_map<std::string, float>                    float_params_;
     std::unordered_map<std::string, std::pair<float, float>>  float2_params_;
+    std::unordered_map<std::string, glm::vec3>                float3_params_;
 };
 } // namespace engine
