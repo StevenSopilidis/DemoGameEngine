@@ -41,7 +41,7 @@ set(PROJECT_SOURCE_FILES
     src/audio.cpp
     src/audio_component.cpp
     src/audio_listener_component.cpp
-
+    src/collision_object.cpp
 )
 
 include_directories(src)

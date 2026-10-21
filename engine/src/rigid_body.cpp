@@ -15,6 +15,8 @@ RigidBody::RigidBody(BodyType type, const std::shared_ptr<Collider>& collider, f
         return;
     }
 
+    collision_object_type_ = CollisionObjectType::RigidBody;
+
     btVector3 inertia{0.0f, 0.0f, 0.0f};
     if (type == BodyType::Dynamic && mass > 0.f && collider_->GetShape())
     {
@@ -31,6 +33,7 @@ RigidBody::RigidBody(BodyType type, const std::shared_ptr<Collider>& collider, f
 
     body_ = std::make_unique<btRigidBody>(info);
     body_->setFriction(friction_);
+    body_->setUserPointer(this);
 
     if (type_ == BodyType::Kinematic)
     {

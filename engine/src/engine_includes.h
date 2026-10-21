@@ -3,6 +3,7 @@
 #include "animation_component.h"
 #include "app.h"
 #include "camera_component.h"
+#include "collision_object.h"
 #include "component.h"
 #include "engine.h"
 #include "fs.h"

@@ -13,16 +13,19 @@ KinematicCharacterController::KinematicCharacterController(float radius, float h
                                                            const glm::vec3& pos)
     : radius_(radius), height_(height)
 {
-    auto world   = Engine::GetInstance().GetPhysicsManager().GetWorld();
-    auto capsule = new btCapsuleShape(radius_, height_);
+    collision_object_type_ = CollisionObjectType::KinematicCharacterController;
+
+    auto* world   = Engine::GetInstance().GetPhysicsManager().GetWorld();
+    auto* capsule = new btCapsuleShape(radius_, height_);
 
     ghost_ = std::make_unique<btPairCachingGhostObject>();
-btTransform start;
+    btTransform start;
     start.setIdentity();
     start.setOrigin(btVector3(pos.x, pos.y, pos.z));
     ghost_->setWorldTransform(start);
     ghost_->setCollisionShape(capsule);
     ghost_->setCollisionFlags(ghost_->getCollisionFlags() | btCollisionObject::CF_CHARACTER_OBJECT);
+    ghost_->setUserPointer(this);
 
     world->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(
         new btGhostPairCallback());

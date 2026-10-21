@@ -1,5 +1,6 @@
 #include "physics_manager.h"
 
+#include "collision_object.h"
 #include "rigid_body.h"
 
 #include <btBulletDynamicsCommon.h>
@@ -28,6 +29,40 @@ void PhysicsManager::Update(float deltaTime)
     const btScalar fixedTimeStep = 1.0f / 60.0f;
     const auto     maxSubsteps   = 4;
     world_->stepSimulation(deltaTime, maxSubsteps, fixedTimeStep);
+
+    // process collisions
+    auto* dispatcher = world_->getDispatcher();
+    for (int i{}; i < dispatcher->getNumManifolds(); i++)
+    {
+        auto* manifold = dispatcher->getManifoldByIndexInternal(i);
+        if (manifold == nullptr)
+        {
+            continue;
+        }
+
+        auto* bodyA = reinterpret_cast<CollisionObject*>(manifold->getBody0()->getUserPointer());
+        auto* bodyB = reinterpret_cast<CollisionObject*>(manifold->getBody1()->getUserPointer());
+
+        if (bodyA == nullptr || bodyB == nullptr)
+        {
+            continue;
+        }
+
+        const auto numContacts = manifold->getNumContacts();
+        for (int j{}; j < numContacts; j++)
+        {
+            const auto& point = manifold->getContactPoint(j);
+
+            const glm::vec3 pos(point.m_positionWorldOnB.x(), point.m_positionWorldOnB.y(),
+                                point.m_positionWorldOnB.z());
+
+            const glm::vec3 norm(point.m_normalWorldOnB.x(), point.m_normalWorldOnB.y(),
+                                 point.m_normalWorldOnB.z());
+
+            bodyA->DispatchContactEvent(bodyB, pos, norm);
+            bodyB->DispatchContactEvent(bodyA, pos, norm);
+        }
+    }
 }
 
 btDiscreteDynamicsWorld* PhysicsManager::GetWorld() { return world_.get(); }

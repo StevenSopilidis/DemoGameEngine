@@ -12,6 +12,7 @@ set(PROJECT_SOURCE_FILES
     src/main.cpp
     src/bullet.cpp
     src/test_object.cpp
+    src/jump_platform.cpp
 )
 
 

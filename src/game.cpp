@@ -1,7 +1,9 @@
 #include "game.h"
 
 #include "GLFW/glfw3.h"
+#include "bullet.h"
 #include "collider.h"
+#include "jump_platform.h"
 #include "light_component.h"
 #include "physics_component.h"
 #include "player.h"
@@ -10,7 +12,12 @@
 
 #include <iostream>
 
-void Game::RegisterTypes() { Player::Register(); }
+void Game::RegisterTypes()
+{
+    Player::Register();
+    Bullet::Register();
+    JumpPlatform::Register();
+}
 
 bool Game::Init()
 {
